@@ -423,7 +423,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=21');
+    const mod = await import('./drum.js?v=23');
     drum = mod.createDrum(stage, {
       items: currentList(), aspect: mode === 'video' ? 9 / 16 : 4 / 5, bg: '#07182f', reduce,
       onChange: caption,
@@ -483,22 +483,11 @@ addEventListener('resize', () => placePill($('[aria-selected="true"]', seg), fal
 
 /* ---------- Archive: folders that throw their contents onto the table ---------- */
 const arch = $('#arch'), archHint = $('#archHint');
+// What each folder holds, in order. They pop out in a straight row, side by side, right above the folder.
 const SETS = {
-  designs: [
-    { item: DESIGNS[0], at: [0.14, 0.26] },
-    { item: DESIGNS[1], at: [0.86, 0.27] },
-    { item: DESIGNS[2], at: [0.5, 0.83] },
-  ],
-  packaging: [
-    { item: DESIGNS[3], at: [0.2, 0.25] },
-    { item: DESIGNS[4], at: [0.84, 0.5] },
-  ],
-  reels: [
-    { item: byId('v08'), at: [0.1, 0.5] },
-    { item: byId('v10'), at: [0.9, 0.5] },
-    { item: byId('v07'), at: [0.3, 0.18] },
-    { item: byId('v05'), at: [0.7, 0.83] },
-  ],
+  designs: [DESIGNS[0], DESIGNS[1], DESIGNS[2]],
+  packaging: [DESIGNS[3], DESIGNS[4]],
+  reels: [byId('v08'), byId('v10'), byId('v07'), byId('v05')],
 };
 const folders = $$('.folder', arch);
 let openSet = null, openBtn = null, wins = [], z = 10;
@@ -515,15 +504,30 @@ function openArchive(btn) {
   openBtn = btn;
   labelFolder(btn, true);
   archHint.hidden = false;
-  const W = arch.clientWidth, H = arch.clientHeight, c = centreOf(btn);
+  const W = arch.clientWidth, H = arch.clientHeight, c = centreOf(btn), a = arch.getBoundingClientRect();
+  const fTop = btn.getBoundingClientRect().top - a.top, fH = btn.offsetHeight;
+  const labelBottom = btn.parentElement.getBoundingClientRect().bottom - a.top;
   const base = Math.min(200, Math.max(100, W * 0.16));
-  const list = SETS[openSet].map(s => s.item);
-  SETS[openSet].forEach(({ item, at }, i) => {
+  const list = SETS[openSet];
+  const sizes = list.map(item => {
     const ratio = item.type === 'video' ? 9 / 16 : item.ratio;
     const area = base * base * (ratio > 1.2 ? 1.25 : ratio < 0.7 ? 0.9 : 1);
-    const w = Math.sqrt(area * ratio), h = w / ratio;
-    const x = clamp(at[0] * W, w / 2 + 10, W - w / 2 - 10);
-    const y = clamp(at[1] * H, h / 2 + 10, H - h / 2 - 10);
+    const w = Math.sqrt(area * ratio);
+    return { w, h: w / ratio };
+  });
+  // One straight row, bottoms lined up and tucked just into the folder's back so they look like they came out
+  // of it. Shrunk to fit the table's width and the room above the folder; if it was dragged up to the top, the
+  // row goes under it instead.
+  const gap = Math.max(10, base * 0.08), dip = 0.15 * fH;
+  const rowW = sizes.reduce((s, p) => s + p.w, 0) + gap * (sizes.length - 1), rowH = Math.max(...sizes.map(p => p.h));
+  const roomAbove = fTop + dip - 12, roomBelow = H - labelBottom - 24;
+  const goAbove = roomAbove >= Math.min(rowH * 0.75, roomBelow);
+  const k = Math.min(1, (W - 20) / rowW, (goAbove ? roomAbove : roomBelow) / rowH);
+  let left = clamp(c.x - rowW * k / 2, 10, W - 10 - rowW * k);
+  list.forEach((item, i) => {
+    const w = sizes[i].w * k, h = sizes[i].h * k;
+    const x = left + w / 2, y = goAbove ? fTop + dip - h / 2 : labelBottom + 12 + h / 2;
+    left += w + gap * k;
     const el = document.createElement('div');
     el.className = 'win';
     el.style.cssText = `width:${w}px;height:${h}px;left:${x - w / 2}px;top:${y - h / 2}px;z-index:${++z}`;

@@ -65,6 +65,8 @@ a { color: inherit }
 button { font: inherit; color: inherit }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px }
 ::selection { background: var(--cobalt); color: #fff }
+/* On the blue scenes a cobalt highlight vanishes, so it goes night blue there */
+section[data-scene="cobalt"] ::selection { background: var(--night); color: #fff }
 
 .wrap { padding-inline: var(--gutter) }
 .inner { max-width: 1240px; margin-inline: auto }
@@ -164,7 +166,7 @@ body[data-scene="cobalt"] .bar-copy { color: var(--cobalt) }
   position: absolute; inset: 0; display: grid; place-items: center; transform: rotateX(180deg);
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
   border-radius: clamp(12px, 1.6vw, 22px) clamp(12px, 1.6vw, 22px) 8px 8px;
-  background: linear-gradient(170deg, #eef2f8, #cdd6e3 70%, var(--steel)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .7);
+  background: linear-gradient(170deg, #2c3445, #182030 70%, #10161f); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1);
 }
 .lid-back span { font: 400 clamp(40px, 6.4vw, 96px)/1 var(--display); color: #fff; text-shadow: 0 0 34px rgba(74, 163, 240, .7) }
 .lid-back em { font: italic 400 1.22em/0 var(--serif); color: var(--cobalt) }
@@ -184,20 +186,20 @@ body[data-scene="cobalt"] .bar-copy { color: var(--cobalt) }
 .power { position: absolute; inset: 0; z-index: 6; background: var(--ink); opacity: 0; pointer-events: none }
 .base {
   position: relative; width: 108%; height: clamp(10px, 1.5vw, 20px); border-radius: 2px 2px 16px 16px;
-  background: linear-gradient(var(--line), var(--steel)); box-shadow: 0 26px 40px -24px rgba(11, 18, 32, .5);
+  background: linear-gradient(#2a3242, #0d121b); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 26px 40px -24px rgba(7, 24, 47, .7);
 }
-.base::after { content: ""; position: absolute; left: 50%; top: 0; width: 15%; height: 40%; translate: -50% 0; background: var(--steel); border-radius: 0 0 8px 8px }
+.base::after { content: ""; position: absolute; left: 50%; top: 0; width: 15%; height: 40%; translate: -50% 0; background: #3a4356; border-radius: 0 0 8px 8px }
 /* The keyboard deck lies flat behind the front edge: edge-on (invisible) head-on, seen from above when the camera tilts */
 .deck {
   position: absolute; left: -4%; width: 108%; top: calc(100% - clamp(10px, 1.5vw, 20px)); aspect-ratio: 1.728; pointer-events: none;
   transform-origin: 50% 0; transform: rotateX(90deg); border-radius: 0 0 18px 18px;
-  background: linear-gradient(180deg, #e6ebf2, #cbd4e1);
+  background: linear-gradient(180deg, #222a38, #121925);
 }
 .deck::before {
   content: ""; position: absolute; left: 12%; right: 12%; top: 9%; height: 46%; border-radius: 8px;
-  background: repeating-linear-gradient(90deg, transparent 0 6.4%, rgba(11, 18, 32, .05) 6.4% 6.8%), repeating-linear-gradient(0deg, #d3dbe7 0 18%, #c2ccda 18% 20%);
+  background: repeating-linear-gradient(90deg, transparent 0 6.4%, rgba(11, 18, 32, .55) 6.4% 6.8%), repeating-linear-gradient(0deg, #5d687c 0 18%, #3a4354 18% 20%);
 }
-.deck::after { content: ""; position: absolute; left: 34%; right: 34%; top: 62%; height: 30%; border-radius: 10px; background: #d7dee9; box-shadow: inset 0 0 0 1px rgba(11, 18, 32, .06) }
+.deck::after { content: ""; position: absolute; left: 34%; right: 34%; top: 62%; height: 30%; border-radius: 10px; background: #2b3343; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07) }
 /* Closed until the opening sequence runs (class set in <head>, removed by JS or a failsafe) */
 html.boot .lid { transform: rotateX(-89deg) }
 html.boot .power { opacity: 1 }
@@ -482,7 +484,6 @@ html.boot .bar { translate: 0 -110% }
   font: 400 14.5px/1 var(--sans); color: var(--muted); transition: color .25s, font-weight .25s;
 }
 .seg button[aria-selected="true"] { color: #fff; font-weight: 500 }
-.seg small { margin-left: 5px; font: 500 11px var(--mono); opacity: .75 }
 .drum-hint { font: 500 12px var(--mono); color: var(--muted) }
 .fallback-row { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px var(--gutter) 18px }
 .fallback-row button { flex: none; width: 220px; scroll-snap-align: center; border: 0; padding: 0; border-radius: 16px; overflow: hidden; cursor: pointer; background: none }
@@ -633,7 +634,7 @@ html.boot .bar { translate: 0 -110% }
 }
 .c-row em { font: italic 400 1.12em/1 var(--serif); letter-spacing: 0 }
 .c-row:hover, .c-row:focus-visible { transform: translateX(1.6vw) }
-.c-mail { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; font: 500 14px var(--mono) }
+.c-mail { margin-top: clamp(48px, 5.5vw, 84px); display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; font: 500 14px var(--mono) }
 .c-mail .badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(255, 255, 255, .14); border: 1px solid var(--hair) }
 .c-mail .badge i { width: 7px; height: 7px; border-radius: 50%; background: #2fd27a }
 .foot {
