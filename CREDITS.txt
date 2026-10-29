@@ -1,0 +1,13 @@
+Artist photos (Wikimedia Commons)
+- assets/img/artist-juice.jpg: "Juice WRLD - Les Ardentes 2019 (cropped).jpg" by Lexiou WesCudi, CC BY-SA 2.0 (https://creativecommons.org/licenses/by-sa/2.0/). Cropped to a square.
+  Source: https://commons.wikimedia.org/wiki/File:Juice_WRLD_-_Les_Ardentes_2019_(cropped).jpg
+- assets/img/artist-sm.jpg: "SeedheMaut(SM).jpg" by Callmehelper, CC0 1.0 (public domain). Cropped to a square.
+  Source: https://commons.wikimedia.org/wiki/File:SeedheMaut(SM).jpg
+- assets/img/goggins.jpg: "US Navy 070723-N-6138R-001 U.S. Navy SEAL, Petty Officer 1st Class David Goggins runs 135 miles through Death Valley, California in the Kiehl's Badwater Ultra Marathon.jpg", U.S. Navy photo, public domain (work of the U.S. federal government). Cropped to 16:9.
+  Source: https://commons.wikimedia.org/wiki/File:US_Navy_070723-N-6138R-001_U.S._Navy_SEAL,_Petty_Officer_1st_Class_David_Goggins_runs_135_miles_through_Death_Valley,_California_in_the_Kiehl's_Badwater_Ultra_Marathon.jpg
+
+Anime cover art (copyrighted by the creators and publishers; low-resolution copies from English Wikipedia, used here for a personal favourites shelf)
+- assets/img/anime-onepiece.jpg: One Piece, Volume 61 cover (Eiichiro Oda / Shueisha). https://en.wikipedia.org/wiki/One_Piece
+- assets/img/anime-bleach.jpg: Bleach, Volume 1 cover (Tite Kubo / Shueisha). https://en.wikipedia.org/wiki/Bleach_(manga)
+- assets/img/anime-vinland.jpg: Vinland Saga, Volume 1 cover (Makoto Yukimura / Kodansha). https://en.wikipedia.org/wiki/Vinland_Saga_(manga)
+- assets/img/anime-hxh.jpg: Hunter x Hunter, Volume 1 cover (Yoshihiro Togashi / Shueisha). https://en.wikipedia.org/wiki/Hunter_%C3%97_Hunter
