@@ -149,7 +149,7 @@ body[data-scene="cobalt"] .bar-copy { color: var(--cobalt) }
 .hero {
   position: relative; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; justify-items: center;
   padding: 64px var(--gutter) 76px; perspective: 2000px; perspective-origin: 50% 35%; overflow: hidden;
-  background: radial-gradient(50% 45% at 50% 62%, rgba(74, 163, 240, .16), transparent 70%), var(--bg);
+  background: radial-gradient(50% 45% at 50% 58%, rgba(255, 255, 255, .16), transparent 70%), var(--bg);
 }
 /* One real 3D scene: .cam is the camera (the opening swing and pull-back), .laptop takes the
    scroll tilt, .lid opens. The lid has a back panel, so a shut laptop seen from above shows its lid. */
@@ -177,8 +177,8 @@ body[data-scene="cobalt"] .bar-copy { color: var(--cobalt) }
 .wall {
   position: absolute; inset: 0; overflow: hidden; container-type: inline-size; color: var(--ink);
   background:
-    radial-gradient(55% 60% at 90% 108%, rgba(4, 112, 200, .34), transparent 70%),
-    radial-gradient(45% 50% at 2% -8%, rgba(74, 163, 240, .24), transparent 70%),
+    radial-gradient(55% 60% at 90% 108%, rgba(4, 112, 200, .14), transparent 70%),
+    radial-gradient(45% 50% at 2% -8%, rgba(74, 163, 240, .1), transparent 70%),
     var(--paper);
 }
 .power { position: absolute; inset: 0; z-index: 6; background: var(--ink); opacity: 0; pointer-events: none }
@@ -276,15 +276,15 @@ html.boot .bar { translate: 0 -110% }
 .dock {
   position: absolute; left: 50%; bottom: max(6px, 1.1cqw); z-index: 3; translate: -50% 0;
   display: flex; align-items: flex-end; gap: max(5px, .7cqw); padding: max(6px, .7cqw);
-  background: rgba(255, 255, 255, .6); border: 1px solid rgba(255, 255, 255, .9); border-radius: max(14px, 1.9cqw);
+  background: rgba(11, 18, 32, .58); border: 1px solid rgba(255, 255, 255, .16); border-radius: max(14px, 1.9cqw);
   backdrop-filter: blur(16px) saturate(1.5); -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  box-shadow: 0 1px 0 rgba(11, 18, 32, .06), 0 14px 30px -16px rgba(11, 18, 32, .45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 14px 30px -14px rgba(11, 18, 32, .6);
 }
 .app {
   --s: 1; position: relative; flex: none; display: grid; place-items: center; border: 0; padding: 0; cursor: pointer;
   width: calc(max(32px, 4.6cqw) * var(--s)); aspect-ratio: 1; border-radius: 23%; background: var(--bgc, var(--paper));
   font: calc(max(18px, 2.7cqw) * var(--s))/1 var(--emoji); text-decoration: none;
-  box-shadow: inset 0 0 0 1px rgba(11, 18, 32, .08), 0 4px 10px -6px rgba(11, 18, 32, .45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14), 0 4px 10px -6px rgba(0, 0, 0, .6);
   transition: width .12s ease-out, font-size .12s ease-out;
 }
 .app img { width: 100%; height: 100%; max-width: none; object-fit: cover; border-radius: 23% }
@@ -296,21 +296,46 @@ html.boot .bar { translate: 0 -110% }
 .app.hot .tip, .app:focus-visible .tip { opacity: 1 }
 .app.bounce { animation: dockBounce .8s cubic-bezier(.3, .7, .4, 1) }
 @keyframes dockBounce { 0%, 100% { transform: none } 22% { transform: translateY(-45%) } 44% { transform: none } 64% { transform: translateY(-20%) } 82% { transform: none } }
-.dock-sep { width: 1px; align-self: stretch; margin-inline: 2px; background: rgba(11, 18, 32, .15) }
+.dock-sep { width: 1px; align-self: stretch; margin-inline: 2px; background: rgba(255, 255, 255, .26) }
+
+/* A real sticky note, stuck on the lid's top-left corner (it rides the lid as it opens) */
+.sticky {
+  position: absolute; z-index: 4; left: -2.2%; top: 9%; width: max(62px, 10.5%); aspect-ratio: 1; container-type: inline-size;
+  background:
+    linear-gradient(180deg, rgba(120, 90, 0, .07) 0 13%, transparent 13%),
+    linear-gradient(160deg, #fff59a, #ffe55c 55%, #f9d340);
+  border-radius: 1px 1px 3px 46% / 1px 1px 3px 9%;
+  box-shadow: 0 1px 1px rgba(11, 18, 32, .2), 0 12px 16px -10px rgba(7, 24, 47, .55);
+  transform: translateZ(2px) rotate(-6deg); transform-origin: 40% 4%;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden; cursor: default;
+  transition: transform .45s var(--spring);
+}
+.sticky p {
+  margin: 0; display: grid; align-content: start; gap: 2cqw; padding: 17cqw 10cqw 0 12cqw;
+  font: 500 15cqw/1 "Caveat", "Bradley Hand", cursive; color: #1d2a44;
+}
+.sticky b { font-weight: 700; font-size: 1.12em; color: var(--cobalt-deep) }
+.sticky s { text-decoration-thickness: 1.5px }
+@media (hover: hover) and (pointer: fine) {
+  .sticky:hover { transform: translateZ(2px) rotate(-1deg) translateY(-3%) }
+}
 
 .hero-below { display: none }
 .scroll-cue {
   position: absolute; left: var(--gutter); bottom: 28px; z-index: 2; display: flex; align-items: center; gap: 10px;
-  font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--slate);
+  font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #fff;
+  padding: 7px 13px 7px 11px; border-radius: 999px; background: rgba(7, 24, 47, .38);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 }
-.scroll-cue i { width: 1px; height: 34px; background: linear-gradient(var(--cobalt), transparent); animation: cue 1.8s ease-in-out infinite }
+.scroll-cue i { width: 1px; height: 16px; background: linear-gradient(#fff, transparent); animation: cue 1.8s ease-in-out infinite }
 @keyframes cue { 0% { transform: scaleY(0); transform-origin: top } 50% { transform: scaleY(1); transform-origin: top } 51% { transform-origin: bottom } 100% { transform: scaleY(0); transform-origin: bottom } }
 @media (max-width: 760px) {
   .hero { padding-top: 70px }
   .laptop { width: 100% }
   .hero-below { display: grid; justify-items: center; gap: 14px; margin-top: 30px; text-align: center }
-  .hero-below .tag { font-size: 10px; padding: 7px 10px }
-  .hero-below .hero-line { font-size: 11px }
+  .hero-below .tag { font-size: 10px; padding: 7px 10px; background: #fff; color: var(--cobalt); box-shadow: 0 8px 16px -10px rgba(7, 24, 47, .6) }
+  .hero-below .hero-line { font-size: 11px; color: var(--muted) }
+  .sticky { top: 17% }
   .scroll-cue { display: none }
 }
 

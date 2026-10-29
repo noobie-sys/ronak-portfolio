@@ -423,7 +423,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=20');
+    const mod = await import('./drum.js?v=21');
     drum = mod.createDrum(stage, {
       items: currentList(), aspect: mode === 'video' ? 9 / 16 : 4 / 5, bg: '#07182f', reduce,
       onChange: caption,

@@ -12,8 +12,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%230470c8'/%3E%3Ctext x='32' y='45' text-anchor='middle' font-family='Impact,Arial Black,sans-serif' font-size='36' fill='white'%3ERb%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="css/style.css?v=21">
 <script>
   // The laptop starts shut on every load and opens once the visitor can see it.
   (function () {
@@ -23,7 +23,7 @@
   })();
 </script>
 </head>
-<body data-scene="light">
+<body data-scene="cobalt">
 <div class="grain" aria-hidden="true"></div>
 
 <!-- Menu bar: slides in once the laptop scrolls away -->
@@ -54,7 +54,7 @@
 
 <main>
   <!-- Hero: a laptop opens, and the whole desktop lives inside its screen -->
-  <section class="hero" id="top" data-scene="light">
+  <section class="hero" id="top" data-scene="cobalt">
     <div class="cam" id="cam">
     <div class="laptop" id="laptop">
       <div class="lid" id="lid">
@@ -98,6 +98,7 @@
           </div>
           <div class="power" id="power" aria-hidden="true"></div>
         </div>
+        <div class="sticky" aria-hidden="true"><p><b>to do:</b><span>✓ edit</span><span>✓ design</span><span><s>sleep</s></span></p></div>
         <div class="lid-back" aria-hidden="true"><span>R<em>b</em></span></div>
       </div>
       <div class="base" id="base" aria-hidden="true"></div>
@@ -390,7 +391,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
-<script type="module" src="js/main.js?v=20"></script>
+<script type="module" src="js/main.js?v=21"></script>
 <script>
   // Failsafe: never leave the laptop closed if a script fails to load.
   setTimeout(function () { if (!window.__rbBoot) document.documentElement.classList.remove('boot'); }, 6000);
