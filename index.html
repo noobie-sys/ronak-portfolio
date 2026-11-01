@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
-<link rel="stylesheet" href="css/style.css?v=45">
+<link rel="stylesheet" href="css/style.css?v=48">
 <script>
   // The laptop starts shut on every load and opens as the visitor scrolls.
   (function () {
@@ -163,20 +163,20 @@
       <div class="arch rv" id="arch">
         <div class="f-row" id="fRow">
           <div class="f-anchor">
-            <button class="folder" type="button" data-set="toolkit" data-name="My toolkit, 10 tools" aria-expanded="false" data-cursor="Drag · click to open">
+            <button class="folder" type="button" data-set="toolkit" data-name="My toolkit" aria-expanded="false" data-cursor="Drag · click to open">
               <span class="f-tab"></span><span class="f-back"></span>
               <span class="f-peek"><img class="pk-tool" src="assets/img/tools/ps.svg" alt="" width="100" height="100" loading="lazy"><img class="pk-tool" src="assets/img/tools/claude.svg" alt="" width="100" height="100" loading="lazy"><img class="pk-tool" src="assets/img/tools/ae.svg" alt="" width="100" height="100" loading="lazy"></span>
               <span class="f-front"><span class="f-sheen"></span></span>
             </button>
-            <p class="f-label">My toolkit<span>10 tools</span></p>
+            <p class="f-label">My toolkit</p>
           </div>
           <div class="f-anchor">
-            <button class="folder" type="button" data-set="brands" data-name="Brands I've worked with, 7 brands" aria-expanded="false" data-cursor="Drag · click to open">
+            <button class="folder" type="button" data-set="brands" data-name="Brands I've worked with" aria-expanded="false" data-cursor="Drag · click to open">
               <span class="f-tab"></span><span class="f-back"></span>
-              <span class="f-peek"><img class="pk-tool pk-round" src="assets/img/brands/raftaar.jpg" alt="" width="150" height="150" loading="lazy"><img class="pk-tool pk-round" src="assets/img/brands/tnm.png" alt="" width="150" height="150" loading="lazy"><img class="pk-tool pk-round" src="assets/img/brands/fyb.jpg" alt="" width="150" height="150" loading="lazy"></span>
+              <span class="f-peek"><img class="pk-tool" src="assets/img/brands/raftaar.jpg" alt="" width="150" height="150" loading="lazy"><img class="pk-tool" src="assets/img/brands/tnm.png" alt="" width="150" height="150" loading="lazy"><img class="pk-tool" src="assets/img/brands/fyb.jpg" alt="" width="150" height="150" loading="lazy"></span>
               <span class="f-front"><span class="f-sheen"></span></span>
             </button>
-            <p class="f-label">Brands I&rsquo;ve worked with<span>7 brands</span></p>
+            <p class="f-label">Brands I&rsquo;ve worked with</p>
           </div>
         </div>
         <span class="arch-hint" id="archHint" hidden>Drag them around · click one to open it</span>
@@ -204,6 +204,12 @@
           <img class="room-img room-open" src="assets/img/desk-drawer.webp" alt="" width="1122" height="1402" loading="lazy">
           <div class="room-lit" id="roomLit" aria-hidden="true"><img src="assets/img/desk-back.webp" alt="" width="1122" height="1402" loading="lazy"></div>
           <p class="room-say" id="roomSay" aria-live="polite"></p>
+          <!-- Steam off the coffee mug (his pick, option C of three): two smoky ribbons that twist as they rise -->
+          <span class="steam" aria-hidden="true"><svg viewBox="0 0 60 100" preserveAspectRatio="none">
+            <defs><linearGradient id="steamFade" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#9aa8bd" stop-opacity=".85"/><stop offset=".7" stop-color="#9aa8bd" stop-opacity=".35"/><stop offset="1" stop-color="#9aa8bd" stop-opacity="0"/></linearGradient></defs>
+            <path d="M26 100 C 16 82, 38 70, 26 52 S 14 26, 28 0"><animate attributeName="d" dur="3.4s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1; .45 0 .55 1" values="M26 100 C 16 82, 38 70, 26 52 S 14 26, 28 0; M26 100 C 38 84, 14 68, 30 50 S 42 24, 22 0; M26 100 C 16 82, 38 70, 26 52 S 14 26, 28 0"/></path>
+            <path d="M36 100 C 46 84, 24 70, 38 54 S 48 30, 34 6" opacity=".7"><animate attributeName="d" dur="4.2s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1; .45 0 .55 1" values="M36 100 C 46 84, 24 70, 38 54 S 48 30, 34 6; M36 100 C 26 82, 50 66, 34 50 S 22 28, 40 6; M36 100 C 46 84, 24 70, 38 54 S 48 30, 34 6"/></path>
+          </svg></span>
           <button class="spot" type="button" data-sheet="anime" style="--l: 9.5%; --t: 7%; --w: 26%; --h: 13.6%"><span class="pill">Anime</span></button>
           <span class="spot" style="--l: 36.6%; --t: 3.5%; --w: 26%; --h: 17%"><span class="pill">Still alive 🌱</span></span>
           <span class="spot" style="--l: 64%; --t: 7%; --w: 26.5%; --h: 13.6%"><span class="pill">Games 🎮</span></span>
@@ -211,7 +217,7 @@
           <button class="spot" type="button" data-sheet="music" style="--l: 36.6%; --t: 21%; --w: 26%; --h: 14%"><span class="pill">Music</span></button>
           <button class="spot" type="button" data-sheet="gym" style="--l: 64%; --t: 21%; --w: 26.5%; --h: 14%"><span class="pill">Gym</span></button>
           <span class="spot" data-quips="Privacy, bro 🙅‍♂️|Why are you lurking? 👀|Watch your own screen 😤|No peeking 🤫|Client work. Top secret 🔒" style="--l: 8%; --t: 50.5%; --w: 26%; --h: 17%"><span class="pill">Privacy, bro 🙅‍♂️</span></span>
-          <button class="spot r" type="button" data-go="#contact" style="--l: 81.5%; --t: 58%; --w: 12.5%; --h: 8.5%"><span class="pill">Let's talk ☕</span></button>
+          <span class="spot r" style="--l: 81.5%; --t: 58%; --w: 12.5%; --h: 8.5%"><span class="pill">It's creatine, not coffee 💪</span></span>
           <span class="spot drawer" data-say="It's &lt;em&gt;empty,&lt;/em&gt; lol" style="--l: 5.5%; --t: 82.5%; --w: 19.5%; --h: 6%"></span>
           <span class="spot drawer" data-say="No &lt;em&gt;money&lt;/em&gt; in here 💸" style="--l: 5.5%; --t: 88.5%; --w: 19.5%; --h: 6%"></span>
           <button class="spot me" type="button" data-sheet="about" style="--l: 37%; --t: 37%; --w: 27%; --h: 24%"><span class="pill">Hi 👋 About me</span></button>
@@ -355,7 +361,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
-<script type="module" src="js/main.js?v=45"></script>
+<script type="module" src="js/main.js?v=48"></script>
 <script>
   // Failsafe: never leave the laptop closed if a script fails to load.
   setTimeout(function () { if (!window.__rbBoot) document.documentElement.classList.remove('boot'); }, 6000);

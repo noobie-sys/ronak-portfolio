@@ -616,7 +616,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=45');
+    const mod = await import('./drum.js?v=48');
     drum = mod.createDrum(stage, {
       items: drumItems(), aspect: drumAspect(), bg: '#07182f', reduce,
       onChange: caption,
@@ -722,32 +722,31 @@ const arch = $('#arch'), archHint = $('#archHint');
 // Clicking a tool card opens a piece made with it; clicking a brand card opens all of that brand's work.
 const ALL = [...VIDEOS, ...WORK.design.flatMap(c => c.items)];
 const piece = id => ALL.find(it => it.id === id);
-const T = (badge, name, line, sample) => ({ type: 'tool', badge: `assets/img/tools/${badge}.svg`, name, line, sample: sample && piece(sample) });
+// Both folders hold app-style tiles: a soft-cornered logo with just the name under it (his request, 1 Nov).
+const T = (badge, name, sample) => ({ type: 'tool', logo: `assets/img/tools/${badge}.svg`, name, sample: sample && piece(sample) });
 const TOOLS = [
-  T('ps', 'Photoshop', 'Social creatives, ads, thumbnails', 'cr-02'),
-  T('ai', 'Illustrator', 'Brand assets, packaging, vectors', null),
-  T('pr', 'Premiere Pro', 'Short & long-form edits, captions, sound design', 'v08'),
-  T('ae', 'After Effects', 'Motion graphics, transitions, VFX', 'v15'),
-  T('id', 'InDesign', 'Print catalogues and layouts', null),
-  T('csp', 'Clip Studio Paint', 'Illustrations and comic stories', 'st-02'),
-  T('chatgpt', 'ChatGPT', 'Ideas, scripts and captions', null),
-  T('claude', 'Claude', 'Scripts, briefs and planning', null),
-  T('gemini', 'Gemini', 'Research and AI visuals', null),
-  T('elevenlabs', 'ElevenLabs', 'AI voice-overs', null),
+  T('ps', 'Photoshop', 'cr-02'),
+  T('ai', 'Illustrator', null),
+  T('pr', 'Premiere Pro', 'v08'),
+  T('ae', 'After Effects', 'v15'),
+  T('id', 'InDesign', null),
+  T('csp', 'Clip Studio Paint', 'st-02'),
+  T('chatgpt', 'ChatGPT', null),
+  T('claude', 'Claude', null),
+  T('gemini', 'Gemini', null),
+  T('elevenlabs', 'ElevenLabs', null),
 ];
 TOOLS[1].sample = DESIGNS[4]; // Illustrator: the Bake a Way dieline
-// Brands he picked (1 Nov). `logo` is his file in assets/img/brands/; without one the card shows the name as a wordmark.
-// A brand with no pieces on the site (Studio Audela) is a card that opens nothing.
-const B = (name, logo, sub, items) => ({ type: 'brand', ratio: 0.72, name, logo: logo && `assets/img/brands/${logo}`, items, sub: sub || `${items.length} ${items.length === 1 ? 'piece' : 'pieces'}` });
+// Brands he picked; logos are his files in assets/img/brands/. Studio Audela has no pieces on the site yet.
+const B = (name, logo, items) => ({ type: 'brand', name, logo: `assets/img/brands/${logo}`, items });
 const ids = list => list.map(piece);
 const BRANDS = [
-  B('The Night Marketer', 'tnm.png', 'Where I work · 2025–now', ids(['cr-01', 'v15', 'cr-07', 'cr-13', 'cr-19'])),
-  B('Raftaar', 'raftaar.jpg', null, ids(['cr-03', 'v01', 'cr-08', 'v13', 'cr-17', 'v02', 'cr-21', 'v16', 'cr-29'])),
-  B('Veda Connection', 'veda.png', 'Internship · 2024–25', ids(['cr-04', 'st-02', 'cr-15', 'st-01', 'cr-10', 'st-06', 'cr-22', 'st-03', 'cr-27', 'st-04', 'cr-30', 'st-05', 'cr-33', 'st-07', 'cr-34', 'st-08'])),
-  B('Fuel Your Body', 'fyb.jpg', null, ids(['cr-02', 'cr-14', 'cr-20', 'cr-26', 'cr-32'])),
-  B('Studio Audela', 'audela.png', 'Agency', []),
-  B('Bake a Way', 'bakeaway.jpg', null, [DESIGNS[4], DESIGNS[3]]),
-  B('Rajdhani', null, null, ids(['v14'])),
+  B('The Night Marketer', 'tnm.png', ids(['cr-01', 'v15', 'cr-07', 'cr-13', 'cr-19'])),
+  B('Raftaar', 'raftaar.jpg', ids(['cr-03', 'v01', 'cr-08', 'v13', 'cr-17', 'v02', 'cr-21', 'v16', 'cr-29'])),
+  B('Veda Connection', 'veda.png', ids(['cr-04', 'st-02', 'cr-15', 'st-01', 'cr-10', 'st-06', 'cr-22', 'st-03', 'cr-27', 'st-04', 'cr-30', 'st-05', 'cr-33', 'st-07', 'cr-34', 'st-08'])),
+  B('Fuel Your Body', 'fyb.jpg', ids(['cr-02', 'cr-14', 'cr-20', 'cr-26', 'cr-32'])),
+  B('Studio Audela', 'audela.png', []),
+  B('Bake a Way', 'bakeaway.jpg', [DESIGNS[4], DESIGNS[3]]),
 ];
 const SETS = { toolkit: TOOLS, brands: BRANDS };
 const folders = $$('.folder', arch);
@@ -771,16 +770,17 @@ function openArchive(btn) {
   const base = Math.min(200, Math.max(100, W * 0.16));
   const list = SETS[openSet];
   const sizes = list.map(item => {
-    const ratio = item.type === 'video' ? 9 / 16 : item.ratio || 0.8;
-    const area = base * base * (ratio > 1.2 ? 1.25 : ratio < 0.7 ? 0.9 : 1) * (item.type === 'tool' ? 0.72 : item.type === 'brand' ? 0.78 : 1);
+    const tile = item.type === 'tool' || item.type === 'brand';
+    const ratio = item.type === 'video' ? 9 / 16 : tile ? 0.8 : item.ratio || 0.8;
+    const area = base * base * (ratio > 1.2 ? 1.25 : ratio < 0.7 ? 0.9 : 1) * (tile ? 0.6 : 1);
     const w = Math.sqrt(area * ratio);
     return { w, h: w / ratio };
   });
   // Balanced rows (up to 7 a row, 4 on a phone), bottoms lined up in each row, the block tucked just into the
   // folder's back so the cards look like they came out of it. Shrunk to fit the table's width and the room above
   // the folder; if there's more room under it (phones, or a folder dragged to the top), the block goes under.
-  // Brand circles have their names underneath, so they stop just above the folder instead of tucking into it.
-  const gap = Math.max(10, base * 0.08), dip = list[0].type === 'brand' ? -14 : 0.15 * fH;
+  // Tiles have their names underneath, so they stop just above the folder instead of tucking into it.
+  const gap = Math.max(10, base * 0.08), dip = list[0].logo ? -14 : 0.15 * fH;
   const nRows = Math.ceil(list.length / (W < 600 ? 4 : 7)), per = Math.ceil(list.length / nRows);
   const rows = Array.from({ length: nRows }, (_, r) => sizes.slice(r * per, r * per + per));
   const rowWs = rows.map(rw => rw.reduce((sum, p) => sum + p.w, 0) + gap * (rw.length - 1));
@@ -807,16 +807,11 @@ function openArchive(btn) {
     el.className = 'win';
     el.style.cssText = `width:${w}px;height:${h}px;left:${x - w / 2}px;top:${y - h / 2}px;z-index:${++z}`;
     el.dataset.cursor = 'Drag · click to open';
-    if (item.type === 'tool') {
-      el.classList.add('w-tool');
-      el.innerHTML = `<div class="t-in"><img class="t-badge" src="${item.badge}" alt=""><b>${item.name}</b><span>${item.line}</span>${item.sample ? '<i>See a piece ↗</i>' : ''}</div>`;
-      if (!item.sample) el.dataset.cursor = 'Drag';
-    } else if (item.type === 'brand') {
-      el.classList.add('w-brand');
-      // A round logo with the name under it, or the name set as a wordmark until he sends a logo.
-      const mark = item.logo ? `<img src="${item.logo}" alt="${item.name}" draggable="false">` : `<span class="b-word">${item.name}</span>`;
-      el.innerHTML = `${mark}<span class="b-label"><b>${item.name}</b><span>${item.sub}</span></span>`;
-      el.dataset.cursor = item.items.length ? `Drag · click to see ${item.items.length > 1 ? 'the work' : 'it'}` : 'Drag';
+    if (item.logo) {
+      el.classList.add('w-app');
+      el.innerHTML = `<img class="a-icon" src="${item.logo}" alt="" draggable="false"><b class="a-name">${item.name}</b>`;
+      const opens = item.type === 'tool' ? !!item.sample : item.items.length > 0;
+      el.dataset.cursor = opens ? `Drag · click to see ${item.type === 'tool' ? 'a piece' : 'the work'}` : 'Drag';
     } else if (item.type === 'video') {
       const v = document.createElement('video');
       v.muted = true; v.loop = true; v.playsInline = true; v.poster = item.poster;
