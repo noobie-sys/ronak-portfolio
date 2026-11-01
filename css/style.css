@@ -200,6 +200,20 @@ body[data-scene="cobalt"] .bar-copy { color: var(--cobalt) }
   background: repeating-linear-gradient(90deg, transparent 0 6.4%, rgba(11, 18, 32, .55) 6.4% 6.8%), repeating-linear-gradient(0deg, #5d687c 0 18%, #3a4354 18% 20%);
 }
 .deck::after { content: ""; position: absolute; left: 34%; right: 34%; top: 62%; height: 30%; border-radius: 10px; background: #2b3343; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07) }
+/* The headline over the shut laptop; it lifts away as scrolling opens the lid. Shown only while main.js drives the hero. */
+.intro {
+  position: absolute; left: var(--gutter); right: var(--gutter); top: clamp(120px, 24svh, 270px); z-index: 2;
+  display: grid; justify-items: center; gap: clamp(10px, 1.3vw, 18px); text-align: center; pointer-events: none; visibility: hidden;
+}
+.intro.on { visibility: visible }
+/* A CSS entrance, so the first thing on screen never waits on a script frame */
+.intro.on > * { animation: intro-in .9s cubic-bezier(.22, 1, .36, 1) .15s both }
+.intro.on > * + * { animation-delay: .27s }
+@keyframes intro-in { from { opacity: 0; transform: translateY(26px) } }
+@media (prefers-reduced-motion: reduce) { .intro.on > * { animation: none } }
+.intro-title { margin: 0; font: 600 clamp(30px, 4.4vw, 70px)/1.08 var(--sans); letter-spacing: -.035em; color: #fff; text-wrap: balance }
+.intro-title em { font: italic 400 1.1em/0 var(--serif); letter-spacing: 0; color: var(--sky) }
+.intro-sub { margin: 0; font: 400 clamp(14px, 1.25vw, 19px)/1.4 var(--sans); color: rgba(255, 255, 255, .62); text-wrap: balance }
 /* Closed until the opening sequence runs (class set in <head>, removed by JS or a failsafe) */
 html.boot .lid { transform: rotateX(-89deg) }
 html.boot .power { opacity: 1 }
@@ -338,7 +352,8 @@ html.boot .bar { translate: 0 -110% }
   .hero-below .tag { font-size: 10px; padding: 7px 10px; background: #fff; color: var(--cobalt); box-shadow: 0 8px 16px -10px rgba(7, 24, 47, .6) }
   .hero-below .hero-line { font-size: 11px; color: var(--muted) }
   .sticky { top: 17% }
-  .scroll-cue { display: none }
+  .intro { top: clamp(90px, 16svh, 150px) }
+  .scroll-cue { left: 50%; translate: -50% 0; bottom: max(28px, 9svh) }
 }
 
 /* ---------- Desk ---------- */
@@ -669,6 +684,16 @@ html.boot .bar { translate: 0 -110% }
   .lb-body { grid-template-columns: minmax(0, 1fr); gap: 14px; justify-items: center; text-align: center }
   .lb-media video, .lb-media img { max-height: calc(100svh - 230px); max-width: 100% }
   .lb-nav { justify-content: center }
+}
+
+/* ---------- Mouse pointer: a pink-to-violet arrow (Ronak's pick), a little bigger over anything clickable.
+   It replaces every cursor (pointer, grab, text) so it never flips back to the system arrow. ---------- */
+@media (hover: hover) and (pointer: fine) {
+  html, html * { cursor: url("../assets/img/cursor.svg") 5 4, auto !important }
+  html :is(a, button, [role="button"], label, summary, .stage, .win, .f-anchor, .spot, .app, .d-icon, .artist),
+  html :is(a, button, [role="button"], label, summary, .stage, .win, .f-anchor, .spot, .app, .d-icon, .artist) * {
+    cursor: url("../assets/img/cursor-hot.svg") 6 5, pointer !important;
+  }
 }
 
 /* ---------- Cursor label + toast ---------- */

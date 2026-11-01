@@ -249,51 +249,55 @@ const heroChars = split(heroName);
 iconHover(heroName, heroChars, KEEP);
 addEventListener('resize', () => relock(heroChars, KEEP));
 
-/* ---------- Hero: the laptop lid opens on every load, then the desktop comes alive ---------- */
-// Run fn once the page is visible and painting (rAF only fires then), so the opening is never
-// played into a background tab.
-function whenVisible(fn) {
-  const go = () => requestAnimationFrame(() => requestAnimationFrame(fn));
-  if (document.visibilityState === 'visible') { go(); return; }
-  const onShow = () => {
-    if (document.visibilityState !== 'visible') return;
-    document.removeEventListener('visibilitychange', onShow);
-    go();
-  };
-  document.addEventListener('visibilitychange', onShow);
+/* ---------- Hero: the page loads on a shut laptop under a headline; scrolling opens the lid ---------- */
+let heroST = null, dockIn = null, woke = false;
+// Once the lid is nearly open the screen wakes up: menu bar, name, tags and icons, then the dock. Plays once.
+function wakeDesktop() {
+  if (woke) return;
+  woke = true;
+  dockIn.play();
+  gsap.timeline()
+    .to('.mb', { yPercent: 0, duration: 0.5, ease: 'power3.out' }, 0)
+    .to(heroChars, { autoAlpha: 1, duration: 0.01, stagger: 0.05 }, 0.05)
+    .to('.hero-content .hero-tags, .hero-sub, .hero-content .hero-line, .desk-icons, .hero-below > *', { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.07 }, 0.3)
+    .add(() => { heroChars[KEEP].classList.remove('swap'); void heroChars[KEEP].offsetWidth; heroChars[KEEP].classList.add('swap'); }, 0.05 + heroChars.length * 0.05 + 0.05)
+    .add(() => ripple(heroChars, KEEP), 1.45);
 }
-function openLaptop() {
-  const cam = $('#cam'), lid = $('#lid'), power = $('#power');
-  if (!gsap) { html.classList.remove('boot'); return; }
+function setupLaptop() {
+  const cam = $('#cam'), lid = $('#lid'), power = $('#power'), intro = $('#intro');
+  if (!gsap || !ScrollTrigger) { html.classList.remove('boot'); return; }
   // Take over from the CSS closed state: close up, looking down on a shut laptop.
   // With Reduce Motion on, the camera stays still and only the lid opens.
   if (reduce) gsap.set(cam, { x: 0, y: 0, yPercent: 0, scale: 1, rotationX: 0 });
   else gsap.set(cam, { x: 0, y: 0, yPercent: -18, scale: 1.12, rotationX: -46, transformOrigin: '50% 60%' });
-  bar.classList.add('tuck');
   gsap.set(lid, { rotationX: -89, transformOrigin: '50% 100%' });
   gsap.set(power, { autoAlpha: 1 });
-  html.classList.remove('boot');
   gsap.set(heroChars, { autoAlpha: 0 });
   gsap.set('.mb', { yPercent: -100 });
-  gsap.set('.desk-icons, .hero-content .hero-tags, .hero-sub, .hero-content .hero-line, .hero-below, .scroll-cue', { autoAlpha: 0, y: 10 });
+  gsap.set('.desk-icons, .hero-content .hero-tags, .hero-sub, .hero-content .hero-line, .hero-below > *', { autoAlpha: 0, y: 10 });
   // WAAPI on transform only, so the dock's centring (the CSS translate property) is never touched.
-  dock.animate([{ transform: 'translateY(170%)' }, { transform: 'none' }], { duration: 750, delay: 2050, easing: 'cubic-bezier(.34,1.4,.64,1)', fill: 'backwards' });
-  // The camera swings down to eye level and pulls back while the lid lifts, then the screen wakes up.
-  gsap.timeline()
-    .to(cam, { yPercent: 0, scale: 1, rotationX: 0, duration: reduce ? 0 : 2.3, ease: 'power3.inOut' }, 0.3)
-    .to(lid, { rotationX: 0, duration: 1.4, ease: 'power2.inOut' }, 0.75)
-    .to(power, { autoAlpha: 0, duration: 0.45 }, 1.75)
-    .to('.mb', { yPercent: 0, duration: 0.5, ease: 'power3.out' }, 1.95)
-    .to(heroChars, { autoAlpha: 1, duration: 0.01, stagger: 0.05 }, 2.0)
-    .to('.hero-content .hero-tags, .hero-sub, .hero-content .hero-line, .desk-icons, .hero-below, .scroll-cue', { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.07 }, 2.25)
-    .add(() => { heroChars[KEEP].classList.remove('swap'); void heroChars[KEEP].offsetWidth; heroChars[KEEP].classList.add('swap'); }, 2.0 + heroChars.length * 0.05 + 0.05)
-    .add(() => bar.classList.remove('tuck'), 2.4)
-    .add(() => ripple(heroChars, KEEP), 3.4);
+  dockIn = dock.animate([{ transform: 'translateY(170%)' }, { transform: 'none' }], { duration: 750, delay: 250, easing: 'cubic-bezier(.34,1.4,.64,1)', fill: 'backwards' });
+  dockIn.pause();
+  intro.classList.add('on'); // its entrance is a CSS animation
+  html.classList.remove('boot');
+  // The hero holds still for one screen of scrolling while the camera swings down to eye level,
+  // the lid lifts and the headline drifts away. Scrolling back up shuts it again.
+  const open = gsap.timeline({ defaults: { ease: 'none' } })
+    .to(intro, { yPercent: -30, autoAlpha: 0, duration: 0.35 }, 0)
+    .to('.scroll-cue', { autoAlpha: 0, duration: 0.15 }, 0)
+    .to(cam, { yPercent: 0, scale: 1, rotationX: 0, duration: 1, ease: 'power2.inOut' }, 0)
+    .to(lid, { rotationX: 0, duration: 0.7, ease: 'power1.inOut' }, 0.25)
+    .to(power, { autoAlpha: 0, duration: 0.15 }, 0.85);
+  heroST = ScrollTrigger.create({
+    trigger: '#top', start: 'top top', end: '+=100%', pin: true, scrub: true, animation: open,
+    onUpdate: s => s.progress > 0.85 && wakeDesktop(),
+    onRefresh: s => s.progress > 0.85 && wakeDesktop(),
+  });
 }
+setupLaptop();
 document.fonts.ready.then(() => {
   lockWidths(heroChars);
   heroChars[KEEP].classList.add('swap');
-  whenVisible(openLaptop);
   ScrollTrigger && ScrollTrigger.refresh();
 });
 
@@ -327,14 +331,15 @@ function setActive(id) {
 }
 if (gsap && ScrollTrigger) {
   $$('section[data-scene]').forEach(sec => ScrollTrigger.create({
-    trigger: sec, start: 'top 55%', end: 'bottom 55%',
+    // The hero is pinned while the laptop opens, so its scene lasts that much longer.
+    trigger: sec, start: 'top 55%', end: sec.id === 'top' ? () => heroST.end + sec.offsetHeight - innerHeight * 0.55 : 'bottom 55%',
     onToggle: s => { if (s.isActive) { document.body.dataset.scene = sec.dataset.scene; setActive(sec.id); } },
   }));
   if (!reduce) {
-    // As you scroll on, the laptop tips back and shrinks away.
-    gsap.timeline({ scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } })
+    // Once the laptop is open and the hero lets go, the laptop tips back and shrinks away.
+    gsap.timeline({ scrollTrigger: { trigger: '#top', start: () => heroST.end, end: () => heroST.end + $('#top').offsetHeight, scrub: true } })
       .to('#laptop', { scale: 0.86, rotationX: 16, yPercent: -6, ease: 'none' }, 0)
-      .to('.scroll-cue, .hero-below', { autoAlpha: 0, ease: 'none' }, 0);
+      .to('.hero-below', { autoAlpha: 0, ease: 'none' }, 0);
     $$('.split').forEach(el => {
       const words = splitWords(el);
       gsap.from(words, { yPercent: 45, autoAlpha: 0, duration: 0.75, ease: 'power3.out', stagger: 0.045, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
@@ -423,7 +428,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=23');
+    const mod = await import('./drum.js?v=25');
     drum = mod.createDrum(stage, {
       items: currentList(), aspect: mode === 'video' ? 9 / 16 : 4 / 5, bg: '#07182f', reduce,
       onChange: caption,
