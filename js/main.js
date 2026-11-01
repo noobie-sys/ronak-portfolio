@@ -108,7 +108,8 @@ const WORK = {
     W('cr-34', 'Hanuman Ji murti', 'Veda Connection'),
     W('cr-35', 'Tranquility redefined', 'Resort'),
     ] },
-    { key: 'banners', label: 'Website banners', aspect: 2.4, items: [
+    // On phones the banners go on the drum two to a card (bn-pair-N.jpg: two banner cards stacked), so they're big enough to read.
+    { key: 'banners', label: 'Website banners', aspect: 2.4, stacked: ['bn-pair-1', 'bn-pair-2', 'bn-pair-3'], items: [
     W('bn-01', 'The ultimate sauce bundle', 'Maritime Madness'),
     W('bn-02', '390 L/hour pressure washer', 'Product banner'),
     W('bn-03', 'Fresh masala buttermilk', 'Product banner'),
@@ -566,10 +567,29 @@ let drum = null, drumState = 'idle', mode = 'video', fallback = null;
 const pick = { video: WORK.video[0].key, design: WORK.design[0].key };
 const currentCat = () => WORK[mode].find(c => c.key === pick[mode]);
 const currentList = () => currentCat().items;
+// What actually goes on the drum: the list itself, or on a phone the banners stacked two to a card.
+const phoneMQ = matchMedia('(max-width: 699px)');
+const stacked = () => phoneMQ.matches && currentCat().stacked;
+const drumItems = () => (stacked()
+  ? currentCat().stacked.map((f, k) => ({ type: 'image', img: `assets/img/work/${f}.jpg`, pair: currentList().slice(k * 2, k * 2 + 2) }))
+  : currentList());
+const drumAspect = () => (stacked() ? 1440 / 1248 : currentCat().aspect);
 function caption(i, item) {
-  $('#dIdx').textContent = `${pad(i + 1)} / ${pad(currentList().length)}`;
+  const total = pad(currentList().length);
+  if (item.pair) {
+    const [a, b] = item.pair;
+    $('#dIdx').textContent = `${pad(i * 2 + 1)}–${pad(i * 2 + item.pair.length)} / ${total}`;
+    $('#dTitle').textContent = a.title;
+    $('#dMeta').textContent = b ? `+ ${b.title}` : a.meta;
+    return;
+  }
+  $('#dIdx').textContent = `${pad(i + 1)} / ${total}`;
   $('#dTitle').textContent = item.title;
   $('#dMeta').textContent = item.meta;
+}
+// A tap on a stacked card opens the banner it landed on (top or bottom half).
+function openFromDrum(i, item, y) {
+  openViewer(currentList(), item && item.pair ? i * 2 + (y > 0.5 && item.pair[1] ? 1 : 0) : i);
 }
 function buildFallback() {
   if (!fallback) {
@@ -596,11 +616,11 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=36');
+    const mod = await import('./drum.js?v=38');
     drum = mod.createDrum(stage, {
-      items: currentList(), aspect: currentCat().aspect, bg: '#07182f', reduce,
+      items: drumItems(), aspect: drumAspect(), bg: '#07182f', reduce,
       onChange: caption,
-      onOpen: i => openViewer(currentList(), i),
+      onOpen: openFromDrum,
       onCursor: label => { stage.dataset.cursor = label || 'Drag'; },
     });
   } catch (err) {
@@ -651,8 +671,8 @@ const placeChip = animate => {
 };
 // Put the current category on the drum (or the flat row when there's no WebGL).
 function showList() {
-  caption(0, currentList()[0]);
-  if (drum) drum.setItems(currentList(), currentCat().aspect);
+  caption(0, drumItems()[0]);
+  if (drum) drum.setItems(drumItems(), drumAspect());
   else if (fallback) buildFallback();
 }
 // The second row: a sliding toggle with one button per category of the current mode, and how many pieces it holds.
@@ -689,7 +709,9 @@ function setMode(m) {
 seg.addEventListener('click', e => { const b = e.target.closest('button[data-mode]'); if (b) setMode(b.dataset.mode); });
 chips.addEventListener('click', e => { const b = e.target.closest('button[data-cat]'); if (b) setCat(b.dataset.cat); });
 buildChips(false);
-caption(0, currentList()[0]);
+caption(0, drumItems()[0]);
+// Turning a phone sideways (or resizing) swaps the banners between stacked and single.
+phoneMQ.addEventListener('change', () => { if (currentCat().stacked) showList(); });
 const placeBoth = () => { placePill(segPill, $('[aria-selected="true"]', seg), false); placeChip(false); };
 document.fonts.ready.then(placeBoth);
 addEventListener('resize', placeBoth);
