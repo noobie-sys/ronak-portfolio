@@ -21,7 +21,7 @@ const V = (id, title, meta) => ({
   loop: `assets/video/${id}-loop.mp4`, poster: `assets/video/${id}-poster.jpg`, src: `assets/video/${id}.mp4`,
 });
 // Showcase designs: a full-size image for the viewer and a card cut to the drum's shape.
-const W = (id, title, meta) => ({ type: 'image', img: `assets/img/work/${id}-card.jpg`, src: `assets/img/work/${id}.jpg`, title, meta });
+const W = (id, title, meta) => ({ type: 'image', id, img: `assets/img/work/${id}-card.jpg`, src: `assets/img/work/${id}.jpg`, title, meta });
 // The showcase: Videos / Designs, each split into categories (Ronak's Drive folders, 1 Nov 2026).
 // Every category is one list on the drum; `aspect` is the card shape for that list.
 // A category with no items is left out of the chips, so Emailers shows up once it has some.
@@ -616,7 +616,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=38');
+    const mod = await import('./drum.js?v=45');
     drum = mod.createDrum(stage, {
       items: drumItems(), aspect: drumAspect(), bg: '#07182f', reduce,
       onChange: caption,
@@ -718,12 +718,38 @@ addEventListener('resize', placeBoth);
 
 /* ---------- Archive: folders that throw their contents onto the table ---------- */
 const arch = $('#arch'), archHint = $('#archHint');
-// What each folder holds, in order. They pop out in a straight row, side by side, right above the folder.
-const SETS = {
-  designs: [DESIGNS[0], DESIGNS[1], DESIGNS[2]],
-  packaging: [DESIGNS[3], DESIGNS[4]],
-  reels: [byId('v08'), byId('v10'), byId('v07'), byId('v05')],
-};
+// What each folder holds (1 Nov 2026, from his résumé): his tools, and the brands he's made work for.
+// Clicking a tool card opens a piece made with it; clicking a brand card opens all of that brand's work.
+const ALL = [...VIDEOS, ...WORK.design.flatMap(c => c.items)];
+const piece = id => ALL.find(it => it.id === id);
+const T = (badge, name, line, sample) => ({ type: 'tool', badge: `assets/img/tools/${badge}.svg`, name, line, sample: sample && piece(sample) });
+const TOOLS = [
+  T('ps', 'Photoshop', 'Social creatives, ads, thumbnails', 'cr-02'),
+  T('ai', 'Illustrator', 'Brand assets, packaging, vectors', null),
+  T('pr', 'Premiere Pro', 'Short & long-form edits, captions, sound design', 'v08'),
+  T('ae', 'After Effects', 'Motion graphics, transitions, VFX', 'v15'),
+  T('id', 'InDesign', 'Print catalogues and layouts', null),
+  T('csp', 'Clip Studio Paint', 'Illustrations and comic stories', 'st-02'),
+  T('chatgpt', 'ChatGPT', 'Ideas, scripts and captions', null),
+  T('claude', 'Claude', 'Scripts, briefs and planning', null),
+  T('gemini', 'Gemini', 'Research and AI visuals', null),
+  T('elevenlabs', 'ElevenLabs', 'AI voice-overs', null),
+];
+TOOLS[1].sample = DESIGNS[4]; // Illustrator: the Bake a Way dieline
+// Brands he picked (1 Nov). `logo` is his file in assets/img/brands/; without one the card shows the name as a wordmark.
+// A brand with no pieces on the site (Studio Audela) is a card that opens nothing.
+const B = (name, logo, sub, items) => ({ type: 'brand', ratio: 0.72, name, logo: logo && `assets/img/brands/${logo}`, items, sub: sub || `${items.length} ${items.length === 1 ? 'piece' : 'pieces'}` });
+const ids = list => list.map(piece);
+const BRANDS = [
+  B('The Night Marketer', 'tnm.png', 'Where I work · 2025–now', ids(['cr-01', 'v15', 'cr-07', 'cr-13', 'cr-19'])),
+  B('Raftaar', 'raftaar.jpg', null, ids(['cr-03', 'v01', 'cr-08', 'v13', 'cr-17', 'v02', 'cr-21', 'v16', 'cr-29'])),
+  B('Veda Connection', 'veda.png', 'Internship · 2024–25', ids(['cr-04', 'st-02', 'cr-15', 'st-01', 'cr-10', 'st-06', 'cr-22', 'st-03', 'cr-27', 'st-04', 'cr-30', 'st-05', 'cr-33', 'st-07', 'cr-34', 'st-08'])),
+  B('Fuel Your Body', 'fyb.jpg', null, ids(['cr-02', 'cr-14', 'cr-20', 'cr-26', 'cr-32'])),
+  B('Studio Audela', 'audela.png', 'Agency', []),
+  B('Bake a Way', 'bakeaway.jpg', null, [DESIGNS[4], DESIGNS[3]]),
+  B('Rajdhani', null, null, ids(['v14'])),
+];
+const SETS = { toolkit: TOOLS, brands: BRANDS };
 const folders = $$('.folder', arch);
 let openSet = null, openBtn = null, wins = [], z = 10;
 function centreOf(btn) {
@@ -745,29 +771,53 @@ function openArchive(btn) {
   const base = Math.min(200, Math.max(100, W * 0.16));
   const list = SETS[openSet];
   const sizes = list.map(item => {
-    const ratio = item.type === 'video' ? 9 / 16 : item.ratio;
-    const area = base * base * (ratio > 1.2 ? 1.25 : ratio < 0.7 ? 0.9 : 1);
+    const ratio = item.type === 'video' ? 9 / 16 : item.ratio || 0.8;
+    const area = base * base * (ratio > 1.2 ? 1.25 : ratio < 0.7 ? 0.9 : 1) * (item.type === 'tool' ? 0.72 : item.type === 'brand' ? 0.78 : 1);
     const w = Math.sqrt(area * ratio);
     return { w, h: w / ratio };
   });
-  // One straight row, bottoms lined up and tucked just into the folder's back so they look like they came out
-  // of it. Shrunk to fit the table's width and the room above the folder; if it was dragged up to the top, the
-  // row goes under it instead.
-  const gap = Math.max(10, base * 0.08), dip = 0.15 * fH;
-  const rowW = sizes.reduce((s, p) => s + p.w, 0) + gap * (sizes.length - 1), rowH = Math.max(...sizes.map(p => p.h));
+  // Balanced rows (up to 7 a row, 4 on a phone), bottoms lined up in each row, the block tucked just into the
+  // folder's back so the cards look like they came out of it. Shrunk to fit the table's width and the room above
+  // the folder; if there's more room under it (phones, or a folder dragged to the top), the block goes under.
+  // Brand circles have their names underneath, so they stop just above the folder instead of tucking into it.
+  const gap = Math.max(10, base * 0.08), dip = list[0].type === 'brand' ? -14 : 0.15 * fH;
+  const nRows = Math.ceil(list.length / (W < 600 ? 4 : 7)), per = Math.ceil(list.length / nRows);
+  const rows = Array.from({ length: nRows }, (_, r) => sizes.slice(r * per, r * per + per));
+  const rowWs = rows.map(rw => rw.reduce((sum, p) => sum + p.w, 0) + gap * (rw.length - 1));
+  const rowHs = rows.map(rw => Math.max(...rw.map(p => p.h)));
+  const blockW = Math.max(...rowWs), blockH = rowHs.reduce((sum, h) => sum + h, 0) + gap * (nRows - 1);
   const roomAbove = fTop + dip - 12, roomBelow = H - labelBottom - 24;
-  const goAbove = roomAbove >= Math.min(rowH * 0.75, roomBelow);
-  const k = Math.min(1, (W - 20) / rowW, (goAbove ? roomAbove : roomBelow) / rowH);
-  let left = clamp(c.x - rowW * k / 2, 10, W - 10 - rowW * k);
+  const goAbove = roomAbove >= Math.min(blockH * 0.75, roomBelow);
+  const k = Math.min(1, (W - 20) / blockW, (goAbove ? roomAbove : roomBelow) / blockH);
+  const spots = [];
+  let rowTop = goAbove ? fTop + dip - blockH * k : labelBottom + 12;
+  const blockLeft = clamp(c.x - blockW * k / 2, 10, W - 10 - blockW * k);
+  rows.forEach((rw, r) => {
+    let left = blockLeft + (blockW - rowWs[r]) * k / 2; // a shorter last row sits centred under the others
+    rw.forEach(p => {
+      const w = p.w * k, h = p.h * k;
+      spots.push({ w, h, x: left + w / 2, y: rowTop + rowHs[r] * k - h / 2 });
+      left += w + gap * k;
+    });
+    rowTop += (rowHs[r] + gap) * k;
+  });
   list.forEach((item, i) => {
-    const w = sizes[i].w * k, h = sizes[i].h * k;
-    const x = left + w / 2, y = goAbove ? fTop + dip - h / 2 : labelBottom + 12 + h / 2;
-    left += w + gap * k;
+    const { w, h, x, y } = spots[i];
     const el = document.createElement('div');
     el.className = 'win';
     el.style.cssText = `width:${w}px;height:${h}px;left:${x - w / 2}px;top:${y - h / 2}px;z-index:${++z}`;
     el.dataset.cursor = 'Drag · click to open';
-    if (item.type === 'video') {
+    if (item.type === 'tool') {
+      el.classList.add('w-tool');
+      el.innerHTML = `<div class="t-in"><img class="t-badge" src="${item.badge}" alt=""><b>${item.name}</b><span>${item.line}</span>${item.sample ? '<i>See a piece ↗</i>' : ''}</div>`;
+      if (!item.sample) el.dataset.cursor = 'Drag';
+    } else if (item.type === 'brand') {
+      el.classList.add('w-brand');
+      // A round logo with the name under it, or the name set as a wordmark until he sends a logo.
+      const mark = item.logo ? `<img src="${item.logo}" alt="${item.name}" draggable="false">` : `<span class="b-word">${item.name}</span>`;
+      el.innerHTML = `${mark}<span class="b-label"><b>${item.name}</b><span>${item.sub}</span></span>`;
+      el.dataset.cursor = item.items.length ? `Drag · click to see ${item.items.length > 1 ? 'the work' : 'it'}` : 'Drag';
+    } else if (item.type === 'video') {
       const v = document.createElement('video');
       v.muted = true; v.loop = true; v.playsInline = true; v.poster = item.poster;
       v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
@@ -783,7 +833,11 @@ function openArchive(btn) {
       el.animate([{ transform: `translate(${c.x - x}px, ${c.y - y}px) scale(.2)`, opacity: 0 }, { transform: 'translate(0,0) scale(1)', opacity: 1 }],
         { duration: 680, delay: i * 70, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'backwards' });
     }
-    wireWin(el, () => openViewer(list, i));
+    wireWin(el, () => {
+      if (item.type === 'tool') { if (item.sample) openViewer([item.sample], 0); }
+      else if (item.type === 'brand') { if (item.items.length) openViewer(item.items, 0); }
+      else openViewer(list, i);
+    });
     wins.push(el);
   });
 }

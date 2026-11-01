@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
-<link rel="stylesheet" href="css/style.css?v=38">
+<link rel="stylesheet" href="css/style.css?v=45">
 <script>
   // The laptop starts shut on every load and opens as the visitor scrolls.
   (function () {
@@ -100,7 +100,7 @@
           </div>
           <div class="power" id="power" aria-hidden="true"></div>
         </div>
-        <div class="sticky" aria-hidden="true"><p><b>to do:</b><span>✓ edit</span><span>✓ design</span><span><s>sleep</s></span></p></div>
+        <a class="sticky" href="assets/Ronak-Bisht-Resume.pdf" target="_blank" rel="noopener" aria-label="Open my résumé (PDF)" data-cursor="Open my résumé"><p><b>my résumé</b><span>4+ yrs · PDF</span><span class="st-go">open me ↗</span></p></a>
         <div class="lid-back" aria-hidden="true"><span>R<em>b</em></span></div>
       </div>
       <div class="base" id="base" aria-hidden="true"></div>
@@ -158,33 +158,25 @@
           <p class="eyebrow">Archive</p>
           <h2 class="h2 split">Open a <em>folder</em></h2>
         </div>
-        <p class="lead rv">Designs, packaging and reels. Click a folder and drag the pieces around. Click any piece to see it full size.</p>
+        <p class="lead rv">The tools I work in and the brands I&rsquo;ve made work for. Click a folder, drag the cards around, and click one to see the work.</p>
       </div>
       <div class="arch rv" id="arch">
         <div class="f-row" id="fRow">
           <div class="f-anchor">
-            <button class="folder" type="button" data-set="designs" data-name="Best designs, 3 items" aria-expanded="false" data-cursor="Drag · click to open">
+            <button class="folder" type="button" data-set="toolkit" data-name="My toolkit, 10 tools" aria-expanded="false" data-cursor="Drag · click to open">
               <span class="f-tab"></span><span class="f-back"></span>
-              <span class="f-peek"><img src="assets/img/design-raftaar-delivery.jpg" alt="" width="960" height="1200" loading="lazy"><img src="assets/img/design-fyb.jpg" alt="" width="1200" height="1200" loading="lazy"><img src="assets/img/design-raftaar-shave.jpg" alt="" width="1200" height="1200" loading="lazy"></span>
+              <span class="f-peek"><img class="pk-tool" src="assets/img/tools/ps.svg" alt="" width="100" height="100" loading="lazy"><img class="pk-tool" src="assets/img/tools/claude.svg" alt="" width="100" height="100" loading="lazy"><img class="pk-tool" src="assets/img/tools/ae.svg" alt="" width="100" height="100" loading="lazy"></span>
               <span class="f-front"><span class="f-sheen"></span></span>
             </button>
-            <p class="f-label">Best designs</p>
+            <p class="f-label">My toolkit<span>10 tools</span></p>
           </div>
           <div class="f-anchor">
-            <button class="folder" type="button" data-set="packaging" data-name="Packaging, 2 items" aria-expanded="false" data-cursor="Drag · click to open">
+            <button class="folder" type="button" data-set="brands" data-name="Brands I've worked with, 7 brands" aria-expanded="false" data-cursor="Drag · click to open">
               <span class="f-tab"></span><span class="f-back"></span>
-              <span class="f-peek"><img src="assets/img/design-bakeaway-dieline.jpg" alt="" width="956" height="1600" loading="lazy"><img src="assets/img/design-bakeaway-bag.jpg" alt="" width="1400" height="933" loading="lazy"><img src="assets/img/design-bakeaway-dieline.jpg" alt="" width="956" height="1600" loading="lazy"></span>
+              <span class="f-peek"><img class="pk-tool pk-round" src="assets/img/brands/raftaar.jpg" alt="" width="150" height="150" loading="lazy"><img class="pk-tool pk-round" src="assets/img/brands/tnm.png" alt="" width="150" height="150" loading="lazy"><img class="pk-tool pk-round" src="assets/img/brands/fyb.jpg" alt="" width="150" height="150" loading="lazy"></span>
               <span class="f-front"><span class="f-sheen"></span></span>
             </button>
-            <p class="f-label">Packaging</p>
-          </div>
-          <div class="f-anchor">
-            <button class="folder" type="button" data-set="reels" data-name="Best reels, 4 loops" aria-expanded="false" data-cursor="Drag · click to open">
-              <span class="f-tab"></span><span class="f-back"></span>
-              <span class="f-peek"><img src="assets/video/v08-poster.jpg" alt="" width="720" height="1280" loading="lazy"><img src="assets/video/v05-poster.jpg" alt="" width="720" height="1280" loading="lazy"><img src="assets/video/v07-poster.jpg" alt="" width="720" height="1280" loading="lazy"></span>
-              <span class="f-front"><span class="f-sheen"></span></span>
-            </button>
-            <p class="f-label">Best reels</p>
+            <p class="f-label">Brands I&rsquo;ve worked with<span>7 brands</span></p>
           </div>
         </div>
         <span class="arch-hint" id="archHint" hidden>Drag them around · click one to open it</span>
@@ -363,7 +355,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
-<script type="module" src="js/main.js?v=38"></script>
+<script type="module" src="js/main.js?v=45"></script>
 <script>
   // Failsafe: never leave the laptop closed if a script fails to load.
   setTimeout(function () { if (!window.__rbBoot) document.documentElement.classList.remove('boot'); }, 6000);
