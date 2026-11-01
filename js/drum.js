@@ -186,11 +186,11 @@ export function createDrum(el, opts) {
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     const t = Math.tan((FOV * Math.PI) / 360);
-    // Fit the middle card: 64% of the height on desktop. Phones get a smaller drum:
-    // 54% of the height and never wider than 44% of the width, so the side cards show.
-    // Wide cards (the stacked banners) may use 88% of a phone's width and 64% of its height, or they'd be too small to read.
+    // Fit the middle card: 64% of the height on desktop. On phones the box is short (it hugs the cards), so a card may
+    // use 90% of its height but never more than 44% of the width, so the side cards show.
+    // Wide cards (the stacked banners) may use 88% of a phone's width, or they'd be too small to read.
     const phone = width < 700;
-    const byH = 1 / ((phone ? (aspect > 1 ? 0.64 : 0.54) : 0.64) * 2 * t);
+    const byH = 1 / ((phone ? 0.9 : 0.64) * 2 * t);
     const byW = aspect / ((phone ? (aspect > 1 ? 0.88 : 0.44) : 0.62) * 2 * t * camera.aspect);
     camera.position.set(0, 0, Math.max(byH, byW));
     camera.updateProjectionMatrix();

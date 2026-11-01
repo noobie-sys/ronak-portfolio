@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
-<link rel="stylesheet" href="css/style.css?v=48">
+<link rel="stylesheet" href="css/style.css?v=53">
 <script>
   // The laptop starts shut on every load and opens as the visitor scrolls.
   (function () {
@@ -229,27 +229,15 @@
           <p class="eyebrow">Timeline</p>
           <h2 class="h2 split">The <em>story</em> so far</h2>
         </div>
-        <div class="tl rv" id="tl">
-          <div class="tl-head">
-            <span class="tl-how">Drag the playhead · click a clip · or use the arrows</span>
-            <span class="tl-ctrl">
-              <button class="tl-btn" type="button" id="tlPrev" aria-label="Previous chapter">←</button>
-              <span class="tc" id="tlTc">Mar 2022</span>
-              <button class="tl-btn" type="button" id="tlNext" aria-label="Next chapter">→</button>
-            </span>
-          </div>
-          <div class="tl-grid">
-            <div class="tl-names" aria-hidden="true"><span></span><span>Work</span><span>Study</span></div>
-            <div class="tl-body" id="tlBody">
-              <div class="tl-ruler" id="tlRuler"></div>
-              <div class="tl-track" data-track="0"></div>
-              <div class="tl-track" data-track="1"></div>
-              <div class="tl-play" id="tlPlay" data-cursor="Drag"></div>
-            </div>
-          </div>
-          <div class="tl-detail" aria-live="polite">
-            <span class="when" id="tlWhen"></span><b id="tlTitle"></b>
-            <p id="tlText"></p>
+        <div class="tl rv" id="tl" tabindex="0" aria-label="Career timeline. Tap a clip, or use the left and right arrow keys.">
+          <div class="tl-ruler" id="tlRuler" aria-hidden="true"></div>
+          <div class="tl-track" id="tlTrack"><span class="tl-head" id="tlHead" aria-hidden="true"></span></div>
+          <div class="tl-study"><span style="flex: 1">Diploma in Design · DICE Academy · 2022</span><span style="flex: 2">B.Com · University of Delhi · 2023–26</span></div>
+          <div class="tl-card" id="tlCard" aria-live="polite"></div>
+          <div class="tl-nav">
+            <button class="tl-btn" type="button" id="tlPrev" aria-label="Previous chapter">←</button>
+            <span class="tc" id="tlTc"></span>
+            <button class="tl-btn" type="button" id="tlNext" aria-label="Next chapter">→</button>
           </div>
         </div>
       </div>
@@ -270,9 +258,6 @@
       <footer class="foot">
         <span>© <span id="year">2026</span> Ronak Bisht · New Delhi · <span data-clock>India</span></span>
         <span class="foot-links">
-          <a href="https://www.behance.net/ronakbisht" target="_blank" rel="noopener"><span class="roll">Behance</span></a>
-          <a href="https://www.instagram.com/ronakgraphic.999/" target="_blank" rel="noopener"><span class="roll">Instagram</span></a>
-          <button type="button" data-copy><span class="roll">Email</span></button>
           <a class="foot-top" href="#top" data-go="#top"><span class="roll">Back to top ↑</span></a>
         </span>
       </footer>
@@ -361,7 +346,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
-<script type="module" src="js/main.js?v=48"></script>
+<script type="module" src="js/main.js?v=53"></script>
 <script>
   // Failsafe: never leave the laptop closed if a script fails to load.
   setTimeout(function () { if (!window.__rbBoot) document.documentElement.classList.remove('boot'); }, 6000);

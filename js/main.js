@@ -616,7 +616,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=48');
+    const mod = await import('./drum.js?v=53');
     drum = mod.createDrum(stage, {
       items: drumItems(), aspect: drumAspect(), bg: '#07182f', reduce,
       onChange: caption,
@@ -946,115 +946,56 @@ $$('.f-anchor', arch).forEach(anchor => {
   });
 });
 
-/* ---------- About: the career timeline, scrubbed by scroll ---------- */
-const TL = {
-  start: 2022, end: 2026.95,
-  clips: [
-    { track: 0, from: 2022.17, to: 2024.67, label: 'Freelance graphic designer', title: 'Freelance graphic designer', when: 'Mar 2022 – Aug 2024',
-      text: 'YouTube thumbnails for creators across niches, freelance design projects from concept to delivery, and fan-art posters to explore new styles.' },
-    { track: 0, from: 2024.67, to: 2025.13, label: 'Veda Connection', title: 'Design intern · Veda Connection', when: 'Sep 2024 – Feb 2025',
-      text: 'Social media creatives and short-form video for product clients, plus website imagery, packaging, print catalogs and Instagram Stories.' },
-    { track: 0, from: 2025.13, to: 2025.58, label: 'Freelance design + edit', title: 'Freelance designer & editor', when: 'Feb 2025 – Aug 2025',
-      text: 'Instagram Reels, social creatives, thumbnails and digital assets for creators and brands, from concept to final delivery.' },
-    { track: 0, from: 2025.58, to: 2026.95, label: 'The Night Marketer', title: 'Designer & editor · The Night Marketer', when: 'Aug 2025 – now',
-      text: 'Short and long-form video for social, campaigns and brands, plus creatives and thumbnails. Edited in Premiere Pro and After Effects, with motion graphics, captions and sound design.' },
-    { track: 1, from: 2022.0, to: 2022.95, label: 'DICE Academy', title: 'Diploma in Design · DICE Academy', when: '2022',
-      text: 'Diploma in Design from DICE Academy.' },
-    { track: 1, from: 2023.5, to: 2026.5, label: 'B.Com · Delhi University', title: 'B.Com · University of Delhi', when: '2023 – 2026',
-      text: 'Bachelor of Commerce from the School of Open Learning, alongside design and editing work.' },
-  ],
-};
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const tlPct = y => ((y - TL.start) / (TL.end - TL.start)) * 100;
-const ruler = $('#tlRuler');
-for (let y = 2022; y <= 2026; y++) {
-  const s = document.createElement('span');
-  s.className = 'tl-year';
-  s.style.left = tlPct(y) + '%';
-  s.textContent = y;
-  ruler.appendChild(s);
-}
-const clipEls = TL.clips.map(c => {
-  const el = document.createElement('button');
-  el.type = 'button';
-  el.className = 'tl-clip';
-  el.style.left = `calc(${tlPct(c.from)}% + 1px)`;
-  el.style.width = `calc(${tlPct(c.to) - tlPct(c.from)}% - 2px)`;
-  el.innerHTML = '<span></span>';
-  el.firstChild.textContent = c.label;
-  el.setAttribute('aria-label', `${c.title}, ${c.when}`);
-  $(`.tl-track[data-track="${c.track}"]`).appendChild(el);
-  el.addEventListener('click', () => showClip(c, true));
-  return el;
+/* ---------- About: the story so far, a simple edit timeline ---------- */
+// Option D of the four he was shown (1 Nov 2026): one row of clips sized by how long each chapter lasted (`grow`), a
+// yellow playhead that jumps to the tapped clip, and that chapter's card underneath. From his résumé.
+const STORY = [
+  { year: '2022', clip: 'Freelance designer', short: 'Freelance', grow: 2.5, when: 'Mar 2022 – Aug 2024', title: 'Freelance', role: 'Graphic designer',
+    text: 'YouTube thumbnails for creators across niches, freelance design projects from concept to delivery, and fan-art posters to explore new styles.' },
+  { year: '2024', clip: 'Veda Connection', short: 'Veda', grow: 1, when: 'Sep 2024 – Feb 2025', title: 'Veda Connection', role: 'Design intern',
+    text: 'Social creatives and short-form video for product clients, plus website imagery, packaging, print catalogues and Instagram Stories.' },
+  { year: '2025', clip: 'Freelance design + edit', short: 'Free\u00adlance', grow: 1, when: 'Feb 2025 – Aug 2025', title: 'Freelance', role: 'Designer & editor',
+    text: 'Instagram Reels, social creatives, thumbnails and digital assets for creators and brands, from concept to final delivery.' },
+  { year: 'Now', clip: 'The Night Marketer', short: 'TNM', grow: 1.6, when: 'Aug 2025 – now', title: 'The Night Marketer', role: 'Designer & editor', now: true,
+    text: 'Short and long-form video for social, campaigns and brands, plus creatives and thumbnails. Premiere Pro and After Effects, with motion graphics, captions and sound design.' },
+];
+const tlTrack = $('#tlTrack'), tlHead = $('#tlHead');
+const storyClips = STORY.map((c, i) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'tl-clip';
+  b.style.flex = c.grow;
+  b.innerHTML = `<span class="f">${c.clip}</span><span class="s">${c.short}</span>`;
+  b.setAttribute('aria-label', `${c.title}, ${c.when}`);
+  b.addEventListener('click', () => showStory(i));
+  tlTrack.appendChild(b);
+  const y = document.createElement('span');
+  y.style.flex = c.grow;
+  y.textContent = c.year;
+  $('#tlRuler').appendChild(y);
+  return b;
 });
-let shownClip = null;
-function showClip(c, moveHead) {
-  if (moveHead) setHead(c.from + 0.02);
-  if (shownClip === c) return;
-  shownClip = c;
-  clipEls.forEach((el, i) => el.classList.toggle('on', TL.clips[i] === c));
-  $('#tlWhen').textContent = c.when;
-  $('#tlTitle').textContent = c.title;
-  $('#tlText').textContent = c.text;
-  if (gsap && !reduce) gsap.fromTo('.tl-detail', { autoAlpha: 0.2, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+let storyAt = -1;
+const placeHead = () => { const c = storyClips[storyAt]; if (c) tlHead.style.left = c.offsetLeft + c.offsetWidth / 2 + 'px'; };
+function showStory(i) {
+  i = (i + STORY.length) % STORY.length;
+  if (i === storyAt) return;
+  storyAt = i;
+  const c = STORY[i];
+  storyClips.forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+  placeHead();
+  $('#tlTc').textContent = c.when;
+  $('#tlCard').innerHTML = `<span class="when">${c.when}</span>${c.now ? '<span class="tl-now">Now</span>' : ''}<b>${c.title}</b><i>${c.role}</i><p>${c.text}</p>`;
+  if (gsap && !reduce) gsap.fromTo('#tlCard', { autoAlpha: 0.2, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
 }
-function setHead(y) {
-  tlY = y;
-  $('#tlPlay').style.left = tlPct(y) + '%';
-  const m = Math.floor((y % 1) * 12 + 1e-6);
-  $('#tlTc').textContent = y >= TL.end - 0.1 ? 'Now' : `${MONTHS[clamp(m, 0, 11)]} ${Math.floor(y)}`;
-}
-function headAt(y) {
-  setHead(y);
-  const work = TL.clips.find(c => c.track === 0 && y >= c.from && y < c.to);
-  const study = TL.clips.find(c => c.track === 1 && y >= c.from && y < c.to);
-  const c = work || study;
-  if (c) showClip(c, false);
-}
-// Scrolling plays the timeline until you touch it; after that it's yours (drag the playhead, click a clip, or the arrows).
-let tlY = TL.start, tlManual = false;
-function takeControl() { tlManual = true; $('#tl').classList.add('manual'); }
-if (gsap && ScrollTrigger && !reduce) {
-  ScrollTrigger.create({
-    trigger: '#tl', start: 'top 85%', end: 'bottom 30%', scrub: 0.4,
-    onUpdate: s => { if (!tlManual) headAt(TL.start + 0.05 + s.progress * (TL.end - TL.start - 0.1)); },
-  });
-}
-headAt(reduce ? TL.end - 0.2 : TL.start + 0.25);
-clipEls.forEach(el => el.addEventListener('click', takeControl));
-// Drag anywhere on the tracks to move the playhead. A press that doesn't move is left alone, so clips stay clickable.
-const tlBody = $('#tlBody');
-tlBody.addEventListener('pointerdown', e => {
-  if (e.button !== 0) return;
-  const r = tlBody.getBoundingClientRect(), sx = e.clientX, sy = e.clientY;
-  const at = x => TL.start + clamp((x - r.left) / r.width, 0, 0.995) * (TL.end - TL.start);
-  let moving = !!e.target.closest('#tlPlay');
-  if (moving) { takeControl(); tlBody.setPointerCapture(e.pointerId); headAt(at(e.clientX)); }
-  const move = ev => {
-    if (!moving) {
-      if (Math.abs(ev.clientX - sx) < 6 || Math.abs(ev.clientY - sy) > Math.abs(ev.clientX - sx)) return; // a vertical swipe still scrolls
-      moving = true; takeControl(); tlBody.setPointerCapture(ev.pointerId);
-    }
-    tlBody.classList.add('scrubbing');
-    headAt(at(ev.clientX));
-  };
-  const up = () => { tlBody.classList.remove('scrubbing'); tlBody.removeEventListener('pointermove', move); };
-  tlBody.addEventListener('pointermove', move);
-  tlBody.addEventListener('pointerup', up, { once: true });
-  tlBody.addEventListener('pointercancel', up, { once: true });
-});
-// The arrows step from one chapter (clip start) to the next, in time order.
-const chapters = [...new Set(TL.clips.map(c => c.from))].sort((a, b) => a - b);
-function step(dir) {
-  takeControl();
-  const next = dir > 0 ? chapters.find(y => y > tlY + 0.03) : [...chapters].reverse().find(y => y < tlY - 0.03);
-  headAt((next ?? (dir > 0 ? chapters.at(-1) : chapters[0])) + 0.02);
-}
-$('#tlPrev').addEventListener('click', () => step(-1));
-$('#tlNext').addEventListener('click', () => step(1));
+showStory(STORY.length - 1); // opens on where he is now
+$('#tlPrev').addEventListener('click', () => showStory(storyAt - 1));
+$('#tlNext').addEventListener('click', () => showStory(storyAt + 1));
 $('#tl').addEventListener('keydown', e => {
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); step(e.key === 'ArrowRight' ? 1 : -1); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); showStory(storyAt + (e.key === 'ArrowRight' ? 1 : -1)); }
 });
+addEventListener('resize', placeHead);
+document.fonts.ready.then(placeHead);
 
 /* ---------- Viewer ---------- */
 const lb = $('#lb'), lbMedia = $('#lbMedia');

@@ -643,54 +643,59 @@ html.boot .bar { translate: 0 -110% }
 .tools { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0 }
 .tools li { font: 500 12.5px/1 var(--mono); padding: 9px 12px; border-radius: 999px; border: 1px solid var(--hair); background: rgba(255, 255, 255, .08) }
 
-/* The career timeline, drawn like an edit timeline */
+/* The story so far: a simple edit timeline (option D of four, his pick, 1 Nov 2026). One row of clips sized by how long
+   each chapter lasted, a yellow playhead that jumps to the tapped clip, and that chapter's card underneath. */
 .tl-wrap { margin-top: clamp(70px, 9vw, 120px) }
 /* Its own solid cobalt panel, so it stays readable when the page fades back to white below it */
 .tl {
-  border: 1px solid rgba(255, 255, 255, .28); border-radius: 22px; padding: clamp(14px, 2vw, 22px); color: #fff;
+  border: 1px solid rgba(255, 255, 255, .28); border-radius: 22px; padding: clamp(18px, 2.4vw, 30px); color: #fff; outline: none;
   background: linear-gradient(160deg, var(--cobalt), var(--cobalt-deep)); box-shadow: 0 40px 70px -40px rgba(3, 30, 70, .7);
 }
-.tl .tl-head, .tl .tl-names, .tl .tl-year, .tl .tl-detail .when, .tl .tl-detail p { color: rgba(255, 255, 255, .8) }
-.tl .tl-head .tc, .tl .tl-detail b { color: #fff }
-.tl .tl-ruler { border-color: rgba(255, 255, 255, .3) }
-.tl .tl-year::before { background: rgba(255, 255, 255, .3) }
-.tl .tl-track { background: rgba(255, 255, 255, .1) }
-.tl-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 500 12px var(--mono); color: var(--muted); margin-bottom: 14px }
-.tl-head .tc { color: var(--fg); font-variant-numeric: tabular-nums; min-width: 6ch; text-align: center }
-.tl-ctrl { display: inline-flex; align-items: center; gap: 8px }
+.tl:focus-visible { outline: 2px solid #fff; outline-offset: 3px }
+.tl-ruler, .tl-track, .tl-study { display: flex; gap: 5px }
+.tl-ruler { padding: 0 7px; margin-bottom: 9px; font: 500 12px/1 var(--mono); color: rgba(255, 255, 255, .78) }
+.tl-ruler span, .tl-clip { min-width: 17% }
+.tl-track { position: relative; padding: 7px; border-radius: 16px; background: rgba(0, 0, 0, .18) }
+.tl-clip {
+  height: clamp(60px, 6vw, 76px); border: 0; border-radius: 10px; padding: 10px 12px; cursor: pointer; text-align: left; overflow: hidden; hyphens: manual;
+  background: rgba(255, 255, 255, .2); color: #fff; font: 600 clamp(11px, 1.15vw, 15px)/1.15 var(--sans); transition: background .3s, color .3s, transform .2s var(--spring);
+}
+.tl-clip:hover { background: rgba(255, 255, 255, .32) }
+.tl-clip[aria-pressed="true"] { background: #fff; color: var(--cobalt) }
+.tl-clip:active { transform: scale(.97) }
+.tl-clip .s { display: none }
+.tl-head { position: absolute; top: -11px; bottom: -11px; width: 2px; margin-left: -1px; border-radius: 2px; background: #ffd84d; pointer-events: none; z-index: 1;
+  transition: left .55s cubic-bezier(.34, 1.3, .64, 1) }
+.tl-head::before { content: ""; position: absolute; top: -4px; left: 50%; translate: -50% 0; width: 13px; height: 13px; border-radius: 3px 3px 7px 7px; background: #ffd84d }
+.tl-study { margin-top: 8px; padding: 0 7px }
+.tl-study span {
+  min-width: 0; height: 22px; padding: 0 8px; border-radius: 6px; border: 1px dashed rgba(255, 255, 255, .5);
+  font: 500 11px/20px var(--mono); color: rgba(255, 255, 255, .85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis
+}
+.tl-card { margin-top: 22px; padding: clamp(18px, 2.4vw, 28px); border-radius: 20px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .2) }
+.tl-card .when { font: 500 12px/1 var(--mono); letter-spacing: .04em; color: var(--sky) }
+.tl-card b { display: block; margin: 10px 0 2px; font: 400 clamp(32px, 3.6vw, 52px)/.95 var(--display); text-transform: uppercase }
+.tl-card i { display: block; font: italic 400 clamp(21px, 2vw, 28px)/1.1 var(--serif); color: var(--sky) }
+.tl-card p { margin: 12px 0 0; max-width: 62ch; font-size: 15px; line-height: 1.55 }
+.tl-now {
+  display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 4px 9px; border-radius: 99px; vertical-align: middle;
+  background: #ffd84d; color: var(--ink); font: 600 10.5px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase
+}
+.tl-now::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #1fae5b; animation: tlBlink 1.4s ease-in-out infinite }
+@keyframes tlBlink { 50% { opacity: .25 } }
+.tl-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px }
+.tl-nav .tc { font: 500 13px/1 var(--mono); font-variant-numeric: tabular-nums }
 .tl-btn {
-  width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .4); background: rgba(255, 255, 255, .1);
-  color: #fff; font: 500 15px/1 var(--sans); transition: background .2s, color .2s, transform .3s var(--spring);
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .4); background: rgba(255, 255, 255, .08);
+  color: #fff; font: 500 18px/1 var(--sans); transition: background .2s, color .2s, transform .3s var(--spring);
 }
 .tl-btn:hover, .tl-btn:focus-visible { background: #fff; color: var(--cobalt); transform: scale(1.08) }
-.tl-how { align-self: center }
-.tl-grid { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 8px }
-.tl-names, .tl-body { display: grid; grid-template-rows: 26px repeat(2, 46px); gap: 8px }
-.tl-names { align-items: center; font: 500 11px var(--mono); color: var(--muted) }
-.tl-body { position: relative; touch-action: pan-y }
-.tl-body.scrubbing .tl-clip { transition: none }
-.tl-ruler { position: relative; border-bottom: 1px solid var(--hair) }
-.tl-year { position: absolute; bottom: 6px; font: 500 11px var(--mono); color: var(--muted); translate: 4px 0 }
-.tl-year::before { content: ""; position: absolute; left: -4px; bottom: -6px; width: 1px; height: 10px; background: var(--hair) }
-.tl-track { position: relative; border-radius: 8px; background: rgba(255, 255, 255, .08) }
-.tl-clip {
-  position: absolute; top: 4px; bottom: 4px; display: flex; align-items: center; overflow: hidden; padding: 0 10px; border-radius: 6px; border: 0; cursor: pointer;
-  background: rgba(255, 255, 255, .22); color: #fff; font: 500 12px/1.1 var(--sans); white-space: nowrap; transition: background .3s, color .3s;
-}
-.tl-clip span { overflow: hidden; text-overflow: ellipsis; min-width: 0 }
-.tl-clip.on { background: #fff; color: var(--cobalt) }
-.tl-play { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; margin-left: -1px; background: #fff; z-index: 2 }
-.tl-play::after { content: ""; position: absolute; top: -8px; bottom: 0; left: -10px; right: -10px }
-.tl-play::before { content: ""; position: absolute; top: -4px; left: 50%; width: 14px; height: 14px; translate: -50% 0; background: #fff; clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%); scale: 1.25 }
-.tl-detail { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 22px; margin-top: 22px; align-items: baseline }
-.tl-detail .when { font: 500 12px var(--mono); color: var(--muted); white-space: nowrap }
-.tl-detail b { font: 400 clamp(26px, 2.8vw, 40px)/1 var(--display); text-transform: uppercase }
-.tl-detail p { grid-column: 2; margin: 0; max-width: 60ch; color: var(--muted) }
 @media (max-width: 640px) {
-  .tl-grid { grid-template-columns: 38px minmax(0, 1fr) }
-  .tl-clip { font-size: 10.5px; padding: 0 6px }
-  .tl-detail { grid-template-columns: minmax(0, 1fr) }
-  .tl-detail p { grid-column: 1 }
+  .tl-clip { padding: 8px; font-size: 11px }
+  .tl-clip .f { display: none }
+  .tl-clip .s { display: inline }
+  .tl-ruler { font-size: 10.5px }
+  .tl-study span { font-size: 9.5px; padding: 0 6px }
 }
 
 /* ---------- Contact ---------- */
@@ -711,11 +716,11 @@ html.boot .bar { translate: 0 -110% }
 .c-mail .badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(255, 255, 255, .14); border: 1px solid var(--hair) }
 .c-mail .badge i { width: 7px; height: 7px; border-radius: 50%; background: #2fd27a }
 .foot {
-  margin-top: clamp(90px, 12vw, 160px); padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--hair);
+  margin-top: clamp(20px, 2.4vw, 32px); padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--hair);
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; font: 500 15px var(--mono); color: var(--fg);
 }
 .foot a, .foot button { color: var(--fg); text-decoration: none; border: 0; background: none; padding: 0; cursor: pointer; font: inherit }
-/* Footer links as bold pills (his request, 1 Nov: bigger, easier to see); they fill yellow on hover. */
+/* Footer: just a bold "Back to top" pill since 1 Nov (Behance, Instagram and Email are already the big lines above); it fills yellow on hover. */
 .foot-links { display: flex; gap: 10px; flex-wrap: wrap }
 .foot-links a, .foot-links button {
   padding: 12px 20px; border-radius: 999px; border: 1.5px solid rgba(255, 255, 255, .55); font: 600 15.5px/1 var(--mono);
@@ -760,8 +765,8 @@ html.boot .bar { translate: 0 -110% }
    It replaces every cursor (pointer, grab, text) so it never flips back to the system arrow. ---------- */
 @media (hover: hover) and (pointer: fine) {
   html, html * { cursor: url("../assets/img/cursor.svg") 5 4, auto !important }
-  html :is(a, button, [role="button"], label, summary, .stage, .win, .f-anchor, .spot, .app, .d-icon, .artist, .tl-play),
-  html :is(a, button, [role="button"], label, summary, .stage, .win, .f-anchor, .spot, .app, .d-icon, .artist, .tl-play) * {
+  html :is(a, button, [role="button"], label, summary, .stage, .win, .f-anchor, .spot, .app, .d-icon, .artist),
+  html :is(a, button, [role="button"], label, summary, .stage, .win, .f-anchor, .spot, .app, .d-icon, .artist) * {
     cursor: url("../assets/img/cursor-hot.svg") 6 5, pointer !important;
   }
 }
@@ -784,3 +789,22 @@ body[data-scene="night"] .cursor, body[data-scene="cobalt"] .cursor { background
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important }
 }
+
+/* ---------- Phone spacing (1 Nov 2026, his request: too much empty space on phones; computers unchanged) ---------- */
+@media (max-width: 760px) {
+  /* The laptop starts where it did, but the section ends right under it instead of filling the whole screen */
+  .hero { min-height: 0; align-content: start; padding-top: clamp(150px, 26svh, 240px); padding-bottom: 28px }
+  #work { padding-top: 56px }
+  #work .sec-head { margin-bottom: 22px }
+  .show-ui { margin-top: 0 }
+  /* The drum box hugs its cards (drum.js lets them fill ~90% of its height on phones) */
+  .stage { height: clamp(320px, 88vw, 420px) }
+  .drum-ui { margin-top: 10px }
+  #archive { padding-top: 72px }
+  .arch { height: 520px }
+  #contact { padding-top: 72px }
+}
+/* The Contact label as a yellow pill (the same yellow as the hover on the lines), sitting right on top of them */
+#contact .eyebrow { justify-self: start; padding: 8px 15px; border-radius: 999px; background: #ffd84d; color: var(--ink); font-weight: 600; opacity: 1 }
+#contact .sec-head { margin-bottom: 6px }
+
