@@ -20,21 +20,108 @@ const V = (id, title, meta) => ({
   type: 'video', id, title, meta,
   loop: `assets/video/${id}-loop.mp4`, poster: `assets/video/${id}-poster.jpg`, src: `assets/video/${id}.mp4`,
 });
-const VIDEOS = [
-  V('v08', 'Wardrobe stylist reel', 'Short form · 1:14'),
-  V('v05', 'Quotation hand-off explainer', 'Motion graphics · Hinglish · 0:57'),
-  V('v07', 'Royale shoe unboxing', 'Product video · 0:22'),
-  V('v01', 'Raftaar AI ad', 'AI video · 0:24'),
-  V('v12', 'Five repos explainer', 'Talking head + motion · 1:01'),
-  V('v03', 'AI kitchen ad', 'AI video · 0:32'),
-  V('v10', 'Kinetic type edit', 'Short form · 0:23'),
-  V('v06', 'Monk strap shoe film', 'Product video · 0:33'),
-  V('v11', 'Shopify to CRM explainer', 'Talking head + motion · 0:58'),
-  V('v09', 'Styling tips reel', 'Short form · 0:39'),
-  V('v02', 'Raftaar crew ad', 'AI video · 0:30'),
-  V('v04', 'Saachi Realtors reel', 'AI video · 0:17'),
-];
+// Showcase designs: a full-size image for the viewer and a card cut to the drum's shape.
+const W = (id, title, meta) => ({ type: 'image', img: `assets/img/work/${id}-card.jpg`, src: `assets/img/work/${id}.jpg`, title, meta });
+// The showcase: Videos / Designs, each split into categories (Ronak's Drive folders, 1 Nov 2026).
+// Every category is one list on the drum; `aspect` is the card shape for that list.
+// A category with no items is left out of the chips, so Emailers shows up once it has some.
+const WORK = {
+  video: [
+    { key: 'ai', label: 'AI reels', aspect: 9 / 16, items: [
+      V('v01', 'Raftaar AI ad', 'Raftaar · 0:24'),
+      V('v12', 'Five repos explainer', 'Voice-over + motion · 1:01'),
+      V('v03', 'AI kitchen ad', 'Product ad · 0:32'),
+      V('v05', 'Quotation hand-off explainer', 'Hinglish · 0:57'),
+      V('v02', 'Raftaar crew ad', 'Raftaar · 0:30'),
+      V('v11', 'Shopify to CRM explainer', 'Hinglish · 0:58'),
+      V('v04', 'Saachi Realtors reel', 'Real estate · 0:17'),
+    ] },
+    { key: 'talking', label: 'Talking head', aspect: 9 / 16, items: [
+      V('v08', 'Wardrobe stylist reel', 'Fashion · 1:14'),
+      V('v18', 'Your style journey, ep. 1', 'Fashion series · 0:50'),
+      V('v17', 'Dress with confidence', 'Fashion · 0:41'),
+      V('v09', 'Styling tips reel', 'Fashion · 0:39'),
+    ] },
+    { key: 'motion', label: 'Motion graphics', aspect: 9 / 16, items: [
+      V('v13', 'Raftaar cricket promo', 'Raftaar · 0:14'),
+      V('v14', 'Rajdhani spices film', 'Rajdhani · 0:28'),
+      V('v16', 'Too hot to step outside?', 'Raftaar · 0:20'),
+      V('v15', 'Smart strategy explainer', 'The Night Marketer · 0:42'),
+    ] },
+    { key: 'edits', label: 'Edits', aspect: 9 / 16, items: [
+      V('v19', 'Purpose from birth', 'Kinetic type · 0:24'),
+      V('v21', 'Juice WRLD tribute', 'Music edit · 0:30'),
+      V('v23', 'Getting sales feels', 'Ad edit · 0:18'),
+      V('v22', 'ADHD podcast clip', 'Podcast edit · 0:17'),
+      V('v07', 'Royale shoe unboxing', 'Product video · 0:22'),
+      V('v20', 'Aap kon?', 'Collage edit · 0:09'),
+      V('v10', 'Kinetic type edit', 'Short form · 0:23'),
+      V('v06', 'Monk strap shoe film', 'Product video · 0:33'),
+    ] },
+  ],
+  design: [
+    { key: 'emailers', label: 'Emailers', aspect: 4 / 5, items: [] },
+    { key: 'stories', label: 'Insta stories', aspect: 9 / 16, items: [
+    W('st-01', 'Happy Bhai Dooj', 'Veda Connection'),
+    W('st-02', 'Abhimanyu and Subhadra', 'Comic story · Veda Connection'),
+    W('st-03', 'Ganesh shankh', 'Veda Connection'),
+    W('st-04', 'Did you know?', 'Veda Connection'),
+    W('st-05', 'Happy Makar Sankranti', 'Veda Connection'),
+    W('st-06', 'The wheel of karma', 'Comic story · Veda Connection'),
+    W('st-07', '7-day spiritual detox', 'Veda Connection'),
+    W('st-08', 'Invite the Lord of Miracles', 'Veda Connection'),
+    ] },
+    { key: 'creatives', label: 'Creatives', aspect: 4 / 5, items: [
+    W('cr-01', 'We make brands impossible to ignore', 'The Night Marketer'),
+    W('cr-02', 'Eat clean, save time', 'FYB'),
+    W('cr-03', 'Happy Holi', 'Raftaar'),
+    W('cr-04', 'Aadiyogi Shiv idol ad', 'Veda Connection'),
+    W('cr-05', 'Wild and wonderful sauces', 'Hot sauce launch'),
+    W('cr-06', 'Dream wedding?', 'Wedding venue'),
+    W('cr-07', 'Stuck? Go green', 'The Night Marketer'),
+    W('cr-08', 'Happy Republic Day', 'Raftaar'),
+    W('cr-09', 'Trick-or-treat your body', 'Halloween offer'),
+    W('cr-10', 'Shri Lakshmi charan paduka', 'Veda Connection'),
+    W('cr-11', 'Mild BBQ sauce', 'Product post'),
+    W('cr-12', 'Your dream mandap', 'Wedding venue'),
+    W('cr-13', 'Ads not working?', 'The Night Marketer'),
+    W('cr-14', 'Black Friday', 'FYB'),
+    W('cr-15', 'The heart of devotion', 'Veda Connection'),
+    W('cr-16', 'Peace, framed by sunrise', 'Resort'),
+    W('cr-17', 'Red Bull range', 'Raftaar'),
+    W('cr-18', 'Gudi Padwa', 'Arjuna Estates'),
+    W('cr-19', 'No tool fits?', 'The Night Marketer'),
+    W('cr-20', 'Healthy meals, no cooking', 'FYB'),
+    W('cr-21', 'Fast deliveries, faster lives', 'Raftaar'),
+    W('cr-22', 'Mahashivratri', 'Veda Connection'),
+    W('cr-23', 'Add heat, add flavour', 'Hot sauce'),
+    W('cr-24', 'Unwind', 'Resort'),
+    W('cr-25', 'Lead and sales toolkit', 'SaaS launch post'),
+    W('cr-26', 'Eat clean without the effort', 'FYB'),
+    W('cr-27', 'Ganesha shankh', 'Veda Connection'),
+    W('cr-28', 'Memories', 'Wedding venue'),
+    W('cr-29', 'Smooth shaves, easy days', 'Raftaar'),
+    W('cr-30', 'Goddess Laxmi footprints', 'Veda Connection'),
+    W('cr-31', 'Peace comes naturally', 'Resort'),
+    W('cr-32', 'No time to cook?', 'FYB'),
+    W('cr-33', 'Gold and silver Balaji', 'Veda Connection'),
+    W('cr-34', 'Hanuman Ji murti', 'Veda Connection'),
+    W('cr-35', 'Tranquility redefined', 'Resort'),
+    ] },
+    { key: 'banners', label: 'Website banners', aspect: 2.4, items: [
+    W('bn-01', 'The ultimate sauce bundle', 'Maritime Madness'),
+    W('bn-02', '390 L/hour pressure washer', 'Product banner'),
+    W('bn-03', 'Fresh masala buttermilk', 'Product banner'),
+    W('bn-04', 'Explore courses', 'Course website'),
+    W('bn-05', 'Vacuum cleaner features', 'Product banner'),
+    W('bn-06', 'Contact us', 'Course website'),
+    ] },
+  ],
+};
+for (const m in WORK) WORK[m] = WORK[m].filter(c => c.items.length);
+const VIDEOS = WORK.video.flatMap(c => c.items);
 const D = (file, title, meta, ratio) => ({ type: 'image', img: `assets/img/${file}`, src: `assets/img/${file}`, title, meta, ratio });
+// The Archive folders' designs.
 const DESIGNS = [
   D('design-fyb.jpg', 'FYB “Eat clean” ad', 'Ad creative · 1080 × 1080', 1),
   D('design-raftaar-delivery.jpg', 'Raftaar delivery post', 'Social post · 1080 × 1350', 0.8),
@@ -473,8 +560,12 @@ spots.forEach(spot => {
 
 /* ---------- Work: the drum ---------- */
 const stage = $('#stage'), seg = $('#seg'), segPill = $('#segPill');
+const chips = $('#chips');
 let drum = null, drumState = 'idle', mode = 'video', fallback = null;
-const currentList = () => (mode === 'video' ? VIDEOS : DESIGNS);
+// The chosen category for each mode, remembered when the visitor flips between Videos and Designs.
+const pick = { video: WORK.video[0].key, design: WORK.design[0].key };
+const currentCat = () => WORK[mode].find(c => c.key === pick[mode]);
+const currentList = () => currentCat().items;
 function caption(i, item) {
   $('#dIdx').textContent = `${pad(i + 1)} / ${pad(currentList().length)}`;
   $('#dTitle').textContent = item.title;
@@ -486,6 +577,8 @@ function buildFallback() {
     fallback.className = 'fallback-row';
     stage.replaceWith(fallback);
   }
+  fallback.style.setProperty('--ar', currentCat().aspect);
+  fallback.classList.toggle('wide', currentCat().aspect > 1);
   fallback.replaceChildren(...currentList().map((it, i) => {
     const b = document.createElement('button');
     b.type = 'button';
@@ -503,9 +596,9 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=29');
+    const mod = await import('./drum.js?v=30');
     drum = mod.createDrum(stage, {
-      items: currentList(), aspect: mode === 'video' ? 9 / 16 : 4 / 5, bg: '#07182f', reduce,
+      items: currentList(), aspect: currentCat().aspect, bg: '#07182f', reduce,
       onChange: caption,
       onOpen: i => openViewer(currentList(), i),
       onCursor: label => { stage.dataset.cursor = label || 'Drag'; },
@@ -547,17 +640,44 @@ function placePill(btn, animate) {
     segPill.style.width = width + 'px';
   }
 }
+// Put the current category on the drum (or the flat row when there's no WebGL).
+function showList() {
+  caption(0, currentList()[0]);
+  if (drum) drum.setItems(currentList(), currentCat().aspect);
+  else if (fallback) buildFallback();
+}
+// The second row: one chip per category of the current mode, with how many pieces it holds.
+function buildChips(animate) {
+  chips.replaceChildren(...WORK[mode].map(c => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.dataset.cat = c.key;
+    b.setAttribute('aria-pressed', String(c.key === pick[mode]));
+    b.innerHTML = `${c.label}<span>${c.items.length}</span>`;
+    return b;
+  }));
+  if (animate && !reduce && gsap) gsap.from(chips.children, { autoAlpha: 0, y: 8, duration: 0.35, stagger: 0.04, ease: 'power2.out' });
+}
+function setCat(key) {
+  if (key === pick[mode]) return;
+  pick[mode] = key;
+  $$('.chip', chips).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === key)));
+  showList();
+}
 function setMode(m) {
   if (m === mode) return;
   mode = m;
   const btn = $(`[data-mode="${m}"]`, seg);
   $$('button', seg).forEach(x => x.setAttribute('aria-selected', String(x === btn)));
   placePill(btn, true);
-  caption(0, currentList()[0]);
-  if (drum) drum.setItems(currentList(), m === 'video' ? 9 / 16 : 4 / 5);
-  else if (fallback) buildFallback();
+  buildChips(true);
+  showList();
 }
 seg.addEventListener('click', e => { const b = e.target.closest('button[data-mode]'); if (b) setMode(b.dataset.mode); });
+chips.addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) setCat(b.dataset.cat); });
+buildChips(false);
+caption(0, currentList()[0]);
 document.fonts.ready.then(() => placePill($('[aria-selected="true"]', seg), false));
 addEventListener('resize', () => placePill($('[aria-selected="true"]', seg), false));
 

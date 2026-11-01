@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
-<link rel="stylesheet" href="css/style.css?v=29">
+<link rel="stylesheet" href="css/style.css?v=30">
 <script>
   // The laptop starts shut on every load and opens as the visitor scrolls.
   (function () {
@@ -123,7 +123,15 @@
       <div class="inner sec-head sec-center">
         <p class="eyebrow">Selected work</p>
         <h2 class="h2 split">The <em>showcase</em></h2>
-        <p class="lead rv">Drag or swipe to spin the drum. The middle card plays. Click it to watch with sound.</p>
+        <p class="lead rv">Pick a category, then drag or swipe to spin the drum. The middle card plays. Click it to watch with sound.</p>
+      </div>
+      <div class="inner show-ui">
+        <div class="seg" id="seg" role="tablist" aria-label="Show">
+          <span class="seg-pill" id="segPill"></span>
+          <button type="button" role="tab" aria-selected="true" data-mode="video">Videos</button>
+          <button type="button" role="tab" aria-selected="false" data-mode="design">Designs</button>
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Category"></div>
       </div>
     </div>
     <div class="stage" id="stage" tabindex="0" role="region" aria-label="Work drum. Left and right arrow keys browse, Enter opens." data-cursor="Drag">
@@ -132,15 +140,10 @@
     </div>
     <div class="wrap">
       <div class="inner drum-ui">
-        <div class="seg" id="seg" role="tablist" aria-label="Show">
-          <span class="seg-pill" id="segPill"></span>
-          <button type="button" role="tab" aria-selected="true" data-mode="video">Videos</button>
-          <button type="button" role="tab" aria-selected="false" data-mode="design">Designs</button>
-        </div>
         <div class="drum-cap" aria-live="polite">
-          <span class="idx" id="dIdx">01 / 12</span>
-          <b id="dTitle">Wardrobe stylist reel</b>
-          <span id="dMeta">Short form · 1:14</span>
+          <span class="idx" id="dIdx">01 / 07</span>
+          <b id="dTitle">Raftaar AI ad</b>
+          <span id="dMeta">Raftaar · 0:24</span>
         </div>
       </div>
     </div>
@@ -357,7 +360,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
-<script type="module" src="js/main.js?v=29"></script>
+<script type="module" src="js/main.js?v=30"></script>
 <script>
   // Failsafe: never leave the laptop closed if a script fails to load.
   setTimeout(function () { if (!window.__rbBoot) document.documentElement.classList.remove('boot'); }, 6000);

@@ -98,7 +98,7 @@ export function createDrum(el, opts) {
   const bg = hex(opts.bg || '#07182f');
   const blankCol = hex('#0e2747');
 
-  let items = [], cards = [], aspect = 0.5625, step = 0.5;
+  let src = [], items = [], cards = [], aspect = 0.5625, step = 0.5, radius = RADIUS;
   let pos = 0, target = 0, vel = 0, raf = 0, last = 0, settled = false, visible = true, dirty = true;
   let pxPerCard = 200, width = 1, height = 1;
   let active = null; // { card, video, tex }
@@ -119,16 +119,21 @@ export function createDrum(el, opts) {
     });
     if (active && active.tex) active.tex.dispose();
     active = null;
-    items = list;
     aspect = cardAspect;
-    step = (aspect + GAP) / RADIUS;
+    // Wide cards (banners) get a wider drum, so several still fit round it.
+    radius = RADIUS * Math.max(1, aspect / 0.8);
+    step = (aspect + GAP) / radius;
+    // A short list goes round more than once, so no card has to jump across the front to wrap.
+    src = list;
+    const reps = Math.max(1, Math.ceil(3.6 / step / list.length));
+    items = Array.from({ length: list.length * reps }, (_, i) => list[i % list.length]);
     const geo = () => new THREE.PlaneGeometry(aspect, 1, 48, 1);
     cards = items.map(item => {
       const uniforms = {
         uMap: { value: blank }, uScale: { value: new THREE.Vector2(1, 1) }, uOffset: { value: new THREE.Vector2(0, 0) },
         uAspect: { value: aspect }, uRadius: { value: 0.045 }, uFade: { value: 1 }, uShade: { value: 0.85 },
         uAngle: { value: 0 }, uBlur: { value: 0 }, uReady: { value: 0 }, uGlobal: global,
-        uCurv: { value: 1 / RADIUS }, uBg: { value: bg }, uBlank: { value: blankCol },
+        uCurv: { value: 1 / radius }, uBg: { value: bg }, uBlank: { value: blankCol },
       };
       const mat = new THREE.ShaderMaterial({ uniforms, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false });
       const mesh = new THREE.Mesh(geo(), mat);
@@ -164,7 +169,7 @@ export function createDrum(el, opts) {
     cards.forEach((c, i) => {
       const d = offset(i);
       const s = d * step;
-      c.mesh.position.set(RADIUS * Math.sin(s), 0, RADIUS * Math.cos(s) - RADIUS);
+      c.mesh.position.set(radius * Math.sin(s), 0, radius * Math.cos(s) - radius);
       c.mesh.rotation.y = s;
       c.mesh.renderOrder = 100 - Math.round(Math.abs(d) * 10);
       const u = c.mat.uniforms;
@@ -195,6 +200,7 @@ export function createDrum(el, opts) {
   }
 
   function centre() { const n = items.length; return ((Math.round(target) % n) + n) % n; }
+  const real = () => centre() % src.length; // index in the list main.js gave us
 
   function stopActive() {
     if (!active) return;
@@ -240,7 +246,7 @@ export function createDrum(el, opts) {
   }
 
   function settle() {
-    opts.onChange && opts.onChange(centre(), items[centre()]);
+    opts.onChange && opts.onChange(real(), items[centre()]);
     startActive();
   }
 
@@ -307,7 +313,7 @@ export function createDrum(el, opts) {
       target = Math.round(sTarget);
       const r = el.getBoundingClientRect();
       const dx = e.clientX - (r.left + r.width / 2);
-      if (Math.abs(dx) < pxPerCard / 2) opts.onOpen && opts.onOpen(centre(), items[centre()]);
+      if (Math.abs(dx) < pxPerCard / 2) opts.onOpen && opts.onOpen(real(), items[centre()]);
       else go(dx < 0 ? -1 : 1);
       return;
     }
@@ -331,7 +337,7 @@ export function createDrum(el, opts) {
   el.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
-    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opts.onOpen && opts.onOpen(centre(), items[centre()]); }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opts.onOpen && opts.onOpen(real(), items[centre()]); }
   });
 
   new ResizeObserver(() => resize()).observe(el);
@@ -368,7 +374,7 @@ export function createDrum(el, opts) {
 
   return {
     go, goTo, setItems,
-    index: () => centre(),
+    index: () => real(),
     pause: () => { if (active) active.video.pause(); },
     resume: () => { if (settled) startActive(); },
   };
