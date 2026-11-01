@@ -596,7 +596,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=30');
+    const mod = await import('./drum.js?v=34');
     drum = mod.createDrum(stage, {
       items: currentList(), aspect: currentCat().aspect, bg: '#07182f', reduce,
       onChange: caption,
@@ -618,51 +618,63 @@ setTimeout(initDrum, 4000);
 $('#dPrev').addEventListener('click', () => drum && drum.go(-1));
 $('#dNext').addEventListener('click', () => drum && drum.go(1));
 
-function placePill(btn, animate) {
+// Slide a toggle's pill under its chosen button. Both rows (Videos / Designs and the categories) use it.
+function placePill(pill, btn, animate) {
   const left = btn.offsetLeft, width = btn.offsetWidth;
-  const prevLeft = parseFloat(segPill.style.left || left);
+  const prevLeft = parseFloat(pill.style.left || left);
   const right = left > prevLeft;
   if (!animate || reduce) {
-    segPill.style.transition = 'none';
-    segPill.style.left = left + 'px';
-    segPill.style.width = width + 'px';
+    pill.style.transition = 'none';
+    pill.style.left = left + 'px';
+    pill.style.width = width + 'px';
     return;
   }
   // The leading edge moves first and the trailing edge catches up, so the pill stretches.
-  segPill.style.transition = right
+  pill.style.transition = right
     ? 'width .38s cubic-bezier(.34,1.3,.64,1), left .4s cubic-bezier(.34,1.3,.64,1) .055s'
     : 'left .38s cubic-bezier(.34,1.56,.64,1), width .4s cubic-bezier(.34,1.3,.64,1) .055s';
   if (right) {
-    segPill.style.width = left + width - prevLeft + 'px';
-    setTimeout(() => { segPill.style.left = left + 'px'; segPill.style.width = width + 'px'; }, 110);
+    pill.style.width = left + width - prevLeft + 'px';
+    setTimeout(() => { pill.style.left = left + 'px'; pill.style.width = width + 'px'; }, 110);
   } else {
-    segPill.style.left = left + 'px';
-    segPill.style.width = width + 'px';
+    pill.style.left = left + 'px';
+    pill.style.width = width + 'px';
   }
 }
+const chipPill = $('#chipPill');
+const placeChip = animate => {
+  const b = $('[aria-selected="true"]', chips);
+  if (!b) return;
+  placePill(chipPill, b, animate);
+  // On a phone the row can scroll sideways; keep the chosen one in view.
+  if (chips.scrollWidth > chips.clientWidth) chips.scrollTo({ left: b.offsetLeft - (chips.clientWidth - b.offsetWidth) / 2, behavior: animate && !reduce ? 'smooth' : 'auto' });
+};
 // Put the current category on the drum (or the flat row when there's no WebGL).
 function showList() {
   caption(0, currentList()[0]);
   if (drum) drum.setItems(currentList(), currentCat().aspect);
   else if (fallback) buildFallback();
 }
-// The second row: one chip per category of the current mode, with how many pieces it holds.
+// The second row: a sliding toggle with one button per category of the current mode, and how many pieces it holds.
 function buildChips(animate) {
-  chips.replaceChildren(...WORK[mode].map(c => {
+  chips.replaceChildren(chipPill, ...WORK[mode].map(c => {
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'chip';
+    b.setAttribute('role', 'tab');
     b.dataset.cat = c.key;
-    b.setAttribute('aria-pressed', String(c.key === pick[mode]));
+    b.setAttribute('aria-selected', String(c.key === pick[mode]));
     b.innerHTML = `${c.label}<span>${c.items.length}</span>`;
     return b;
   }));
-  if (animate && !reduce && gsap) gsap.from(chips.children, { autoAlpha: 0, y: 8, duration: 0.35, stagger: 0.04, ease: 'power2.out' });
+  chipPill.style.left = '';
+  placeChip(false);
+  if (animate && !reduce) chips.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, easing: 'ease-out' });
 }
 function setCat(key) {
   if (key === pick[mode]) return;
   pick[mode] = key;
-  $$('.chip', chips).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === key)));
+  $$('button', chips).forEach(b => b.setAttribute('aria-selected', String(b.dataset.cat === key)));
+  placeChip(true);
   showList();
 }
 function setMode(m) {
@@ -670,16 +682,17 @@ function setMode(m) {
   mode = m;
   const btn = $(`[data-mode="${m}"]`, seg);
   $$('button', seg).forEach(x => x.setAttribute('aria-selected', String(x === btn)));
-  placePill(btn, true);
+  placePill(segPill, btn, true);
   buildChips(true);
   showList();
 }
 seg.addEventListener('click', e => { const b = e.target.closest('button[data-mode]'); if (b) setMode(b.dataset.mode); });
-chips.addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) setCat(b.dataset.cat); });
+chips.addEventListener('click', e => { const b = e.target.closest('button[data-cat]'); if (b) setCat(b.dataset.cat); });
 buildChips(false);
 caption(0, currentList()[0]);
-document.fonts.ready.then(() => placePill($('[aria-selected="true"]', seg), false));
-addEventListener('resize', () => placePill($('[aria-selected="true"]', seg), false));
+const placeBoth = () => { placePill(segPill, $('[aria-selected="true"]', seg), false); placeChip(false); };
+document.fonts.ready.then(placeBoth);
+addEventListener('resize', placeBoth);
 
 /* ---------- Archive: folders that throw their contents onto the table ---------- */
 const arch = $('#arch'), archHint = $('#archHint');
