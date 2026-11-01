@@ -182,6 +182,39 @@ document.addEventListener('click', e => {
   } else setTimeout(go, inSheet ? 300 : 0);
 });
 
+/* ---------- Desktop icons (inside the laptop screen): drag them around like on a Mac; a plain click still opens ---------- */
+// Mouse only, so a finger on a phone still scrolls the page. They stay inside the screen, below its menu bar.
+const wall = $('#wall');
+$$('.d-icon').forEach(icon => {
+  let drag = null, x = 0, y = 0, dragged = false;
+  icon.addEventListener('dragstart', e => e.preventDefault()); // links are natively draggable
+  icon.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch' || e.button !== 0) return;
+    const wb = wall.getBoundingClientRect(), ib = icon.getBoundingClientRect();
+    const k = wb.width / wall.offsetWidth; // the laptop is scaled by the opening and the scroll tilt
+    const top = wb.top + $('.mb', wall).offsetHeight * k;
+    drag = { sx: e.clientX, sy: e.clientY, k, x0: x, y0: y,
+      minX: (wb.left - ib.left) / k, maxX: (wb.right - ib.right) / k, minY: (top - ib.top) / k, maxY: (wb.bottom - ib.bottom) / k };
+    dragged = false;
+    icon.setPointerCapture(e.pointerId);
+  });
+  icon.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = (e.clientX - drag.sx) / drag.k, dy = (e.clientY - drag.sy) / drag.k;
+    if (!dragged && Math.hypot(dx, dy) < 5) return;
+    dragged = true;
+    icon.classList.add('dragging');
+    x = drag.x0 + clamp(dx, drag.minX, drag.maxX);
+    y = drag.y0 + clamp(dy, drag.minY, drag.maxY);
+    icon.style.translate = `${x}px ${y}px`;
+  });
+  const drop = () => { drag = null; icon.classList.remove('dragging'); };
+  icon.addEventListener('pointerup', drop);
+  icon.addEventListener('pointercancel', drop);
+  // A drag ends in a click on the same icon; swallow it so dropping an icon doesn't scroll the page.
+  icon.addEventListener('click', e => { if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; } }, true);
+});
+
 /* ---------- Letters: split, lock widths, swap for tool icons on hover ---------- */
 function split(el) {
   const text = el.textContent;
@@ -249,8 +282,8 @@ const heroChars = split(heroName);
 iconHover(heroName, heroChars, KEEP);
 addEventListener('resize', () => relock(heroChars, KEEP));
 
-/* ---------- Hero: the page loads on a shut laptop under a headline; scrolling opens the lid ---------- */
-let heroST = null, dockIn = null, woke = false;
+/* ---------- Hero: the page loads on a shut laptop under a headline; the first scroll opens it by itself ---------- */
+let dockIn = null, woke = false, opened = false;
 // Once the lid is nearly open the screen wakes up: menu bar, name, tags and icons, then the dock. Plays once.
 function wakeDesktop() {
   if (woke) return;
@@ -280,19 +313,42 @@ function setupLaptop() {
   dockIn.pause();
   intro.classList.add('on'); // its entrance is a CSS animation
   html.classList.remove('boot');
-  // The hero holds still for one screen of scrolling while the camera swings down to eye level,
-  // the lid lifts and the headline drifts away. Scrolling back up shuts it again.
-  const open = gsap.timeline({ defaults: { ease: 'none' } })
-    .to(intro, { yPercent: -30, autoAlpha: 0, duration: 0.35 }, 0)
-    .to('.scroll-cue', { autoAlpha: 0, duration: 0.15 }, 0)
-    .to(cam, { yPercent: 0, scale: 1, rotationX: 0, duration: 1, ease: 'power2.inOut' }, 0)
-    .to(lid, { rotationX: 0, duration: 0.7, ease: 'power1.inOut' }, 0.25)
-    .to(power, { autoAlpha: 0, duration: 0.15 }, 0.85);
-  heroST = ScrollTrigger.create({
-    trigger: '#top', start: 'top top', end: '+=100%', pin: true, scrub: true, animation: open,
-    onUpdate: s => s.progress > 0.85 && wakeDesktop(),
-    onRefresh: s => s.progress > 0.85 && wakeDesktop(),
+  // The first nudge down (wheel, swipe, arrow key) is caught at the top of the page and plays the opening by
+  // itself (Ronak's request: visitors shouldn't have to scroll it open): the headline drifts away, the camera
+  // swings down to eye level and the lid lifts. The page holds still until the lid is open, then scrolls normally.
+  const open = gsap.timeline({ paused: true, onComplete: () => held && lock(false) })
+    .to(intro, { yPercent: -30, autoAlpha: 0, duration: 0.6, ease: 'power2.in' }, 0)
+    .to('.scroll-cue', { autoAlpha: 0, duration: 0.3 }, 0)
+    .to(cam, { yPercent: 0, scale: 1, rotationX: 0, duration: reduce ? 0 : 1.9, ease: 'power3.inOut' }, 0.1)
+    .to(lid, { rotationX: 0, duration: 1.3, ease: 'power2.inOut' }, 0.45)
+    .to(power, { autoAlpha: 0, duration: 0.35 }, 1.5)
+    .add(wakeDesktop, 1.55);
+  let held = false;
+  const play = hold => {
+    if (opened) return;
+    opened = true;
+    held = hold;
+    if (hold) lock(true);
+    open.play();
+  };
+  const atTop = () => scrollY < 4;
+  // Capture phase on window, so Lenis never sees the nudge that opens the laptop.
+  addEventListener('wheel', e => {
+    if (!opened && atTop() && e.deltaY > 0) { e.preventDefault(); e.stopImmediatePropagation(); play(true); }
+  }, { capture: true, passive: false });
+  let touchY = 0;
+  addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+  addEventListener('touchmove', e => {
+    if (!opened && atTop() && touchY - e.touches[0].clientY > 6) { e.preventDefault(); play(true); }
+  }, { passive: false });
+  addEventListener('keydown', e => {
+    if (opened || !atTop() || !['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key)) return;
+    if (e.target.closest && e.target.closest('a, button, input, textarea, [tabindex]')) return;
+    e.preventDefault();
+    play(true);
   });
+  // Anything else that moves the page (a menu link, the scrollbar, a reload halfway down) opens it without holding.
+  addEventListener('scroll', () => { if (!opened && !atTop()) play(false); }, { passive: true });
 }
 setupLaptop();
 document.fonts.ready.then(() => {
@@ -331,13 +387,12 @@ function setActive(id) {
 }
 if (gsap && ScrollTrigger) {
   $$('section[data-scene]').forEach(sec => ScrollTrigger.create({
-    // The hero is pinned while the laptop opens, so its scene lasts that much longer.
-    trigger: sec, start: 'top 55%', end: sec.id === 'top' ? () => heroST.end + sec.offsetHeight - innerHeight * 0.55 : 'bottom 55%',
+    trigger: sec, start: 'top 55%', end: 'bottom 55%',
     onToggle: s => { if (s.isActive) { document.body.dataset.scene = sec.dataset.scene; setActive(sec.id); } },
   }));
   if (!reduce) {
-    // Once the laptop is open and the hero lets go, the laptop tips back and shrinks away.
-    gsap.timeline({ scrollTrigger: { trigger: '#top', start: () => heroST.end, end: () => heroST.end + $('#top').offsetHeight, scrub: true } })
+    // As you scroll on past the open laptop, it tips back and shrinks away.
+    gsap.timeline({ scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } })
       .to('#laptop', { scale: 0.86, rotationX: 16, yPercent: -6, ease: 'none' }, 0)
       .to('.hero-below', { autoAlpha: 0, ease: 'none' }, 0);
     $$('.split').forEach(el => {
@@ -350,13 +405,27 @@ if (gsap && ScrollTrigger) {
   }
 }
 
-/* ---------- Desk: hotspots and the bottom sheet ---------- */
-const deskScene = $('#deskScene'), spots = $$('.spot', deskScene);
+/* ---------- About: the desk's hotspots and the bottom sheet ---------- */
+// Hovering an object lights its box (the lit copy of the picture is clipped to it); hovering Ronak turns him round;
+// hovering a drawer swaps in the picture with the drawers open, and he turns round to say something about it.
+const room = $('#room'), roomLit = $('#roomLit'), roomSay = $('#roomSay'), spots = $$('.spot', room);
 const sheetLayer = $('#sheetLayer'), sheetBody = $('#sheetBody');
-let sheetOpen = false, sheetReturn = null;
+let sheetOpen = false, sheetReturn = null, quipSpot = null;
 function setOn(spot) {
   spots.forEach(s => s.classList.toggle('on', s === spot));
-  deskScene.classList.toggle('has-on', !!spot);
+  room.classList.toggle('has-on', !!spot);
+  room.classList.toggle('turned', !!spot && spot.classList.contains('me'));
+  const say = spot && spot.dataset.say;
+  room.classList.toggle('open', !!say);
+  if (say) roomSay.innerHTML = say; // our own markup from data-say; the old line stays while the bubble fades out
+  if (spot) ['--l', '--t', '--w', '--h'].forEach(k => roomLit.style.setProperty(k, spot.style.getPropertyValue(k)));
+  // The laptop has a different "no peeking" line every time you look at it.
+  if (spot && spot.dataset.quips && spot !== quipSpot) {
+    const quips = spot.dataset.quips.split('|');
+    spot._q = ((spot._q ?? -1) + 1) % quips.length;
+    $('.pill', spot).textContent = quips[spot._q];
+  }
+  quipSpot = spot;
 }
 function openSheet(name) {
   const t = document.getElementById('t-' + name);
@@ -393,7 +462,13 @@ spots.forEach(spot => {
   }
   spot.addEventListener('focus', () => setOn(spot));
   spot.addEventListener('blur', () => { if (!sheetOpen) setOn(null); });
-  spot.addEventListener('click', () => { setOn(spot); openSheet(spot.dataset.sheet); });
+  spot.addEventListener('click', () => {
+    setOn(spot);
+    openSheet(spot.dataset.sheet);
+    // Objects with nothing to open (the plant, the controller) just show their label for a moment on touch.
+    clearTimeout(room._t);
+    if (!fine && !spot.dataset.sheet) room._t = setTimeout(() => setOn(null), 1600);
+  });
 });
 
 /* ---------- Work: the drum ---------- */
@@ -428,7 +503,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=25');
+    const mod = await import('./drum.js?v=29');
     drum = mod.createDrum(stage, {
       items: currentList(), aspect: mode === 'video' ? 9 / 16 : 4 / 5, bg: '#07182f', reduce,
       onChange: caption,
@@ -667,29 +742,6 @@ $$('.f-anchor', arch).forEach(anchor => {
   });
 });
 
-/* ---------- About: the photo tilts toward the cursor and throws out a few tools ---------- */
-const portrait = $('#portrait'), pfTilt = $('#pfTilt');
-if (portrait) {
-  const settle = () => { portrait.classList.remove('hot'); pfTilt.style.transform = ''; };
-  portrait.addEventListener('pointermove', e => {
-    if (e.pointerType !== 'mouse') return;
-    const r = pfTilt.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
-    portrait.classList.add('hot');
-    if (!reduce) pfTilt.style.transform = `rotateX(${((0.5 - py) * 14).toFixed(2)}deg) rotateY(${((px - 0.5) * 16).toFixed(2)}deg) scale(1.03)`;
-    pfTilt.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
-    pfTilt.style.setProperty('--my', (py * 100).toFixed(1) + '%');
-  });
-  portrait.addEventListener('pointerleave', settle);
-  // On touch, a tap shows the tools for a moment.
-  portrait.addEventListener('pointerdown', e => {
-    if (e.pointerType === 'mouse') return;
-    portrait.classList.add('hot');
-    clearTimeout(portrait._t);
-    portrait._t = setTimeout(settle, 1800);
-  });
-}
-
 /* ---------- About: the career timeline, scrubbed by scroll ---------- */
 const TL = {
   start: 2022, end: 2026.95,
@@ -743,6 +795,7 @@ function showClip(c, moveHead) {
   if (gsap && !reduce) gsap.fromTo('.tl-detail', { autoAlpha: 0.2, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
 }
 function setHead(y) {
+  tlY = y;
   $('#tlPlay').style.left = tlPct(y) + '%';
   const m = Math.floor((y % 1) * 12 + 1e-6);
   $('#tlTc').textContent = y >= TL.end - 0.1 ? 'Now' : `${MONTHS[clamp(m, 0, 11)]} ${Math.floor(y)}`;
@@ -754,13 +807,50 @@ function headAt(y) {
   const c = work || study;
   if (c) showClip(c, false);
 }
+// Scrolling plays the timeline until you touch it; after that it's yours (drag the playhead, click a clip, or the arrows).
+let tlY = TL.start, tlManual = false;
+function takeControl() { tlManual = true; $('#tl').classList.add('manual'); }
 if (gsap && ScrollTrigger && !reduce) {
   ScrollTrigger.create({
     trigger: '#tl', start: 'top 85%', end: 'bottom 30%', scrub: 0.4,
-    onUpdate: s => headAt(TL.start + 0.05 + s.progress * (TL.end - TL.start - 0.1)),
+    onUpdate: s => { if (!tlManual) headAt(TL.start + 0.05 + s.progress * (TL.end - TL.start - 0.1)); },
   });
 }
 headAt(reduce ? TL.end - 0.2 : TL.start + 0.25);
+clipEls.forEach(el => el.addEventListener('click', takeControl));
+// Drag anywhere on the tracks to move the playhead. A press that doesn't move is left alone, so clips stay clickable.
+const tlBody = $('#tlBody');
+tlBody.addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  const r = tlBody.getBoundingClientRect(), sx = e.clientX, sy = e.clientY;
+  const at = x => TL.start + clamp((x - r.left) / r.width, 0, 0.995) * (TL.end - TL.start);
+  let moving = !!e.target.closest('#tlPlay');
+  if (moving) { takeControl(); tlBody.setPointerCapture(e.pointerId); headAt(at(e.clientX)); }
+  const move = ev => {
+    if (!moving) {
+      if (Math.abs(ev.clientX - sx) < 6 || Math.abs(ev.clientY - sy) > Math.abs(ev.clientX - sx)) return; // a vertical swipe still scrolls
+      moving = true; takeControl(); tlBody.setPointerCapture(ev.pointerId);
+    }
+    tlBody.classList.add('scrubbing');
+    headAt(at(ev.clientX));
+  };
+  const up = () => { tlBody.classList.remove('scrubbing'); tlBody.removeEventListener('pointermove', move); };
+  tlBody.addEventListener('pointermove', move);
+  tlBody.addEventListener('pointerup', up, { once: true });
+  tlBody.addEventListener('pointercancel', up, { once: true });
+});
+// The arrows step from one chapter (clip start) to the next, in time order.
+const chapters = [...new Set(TL.clips.map(c => c.from))].sort((a, b) => a - b);
+function step(dir) {
+  takeControl();
+  const next = dir > 0 ? chapters.find(y => y > tlY + 0.03) : [...chapters].reverse().find(y => y < tlY - 0.03);
+  headAt((next ?? (dir > 0 ? chapters.at(-1) : chapters[0])) + 0.02);
+}
+$('#tlPrev').addEventListener('click', () => step(-1));
+$('#tlNext').addEventListener('click', () => step(1));
+$('#tl').addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); step(e.key === 'ArrowRight' ? 1 : -1); }
+});
 
 /* ---------- Viewer ---------- */
 const lb = $('#lb'), lbMedia = $('#lbMedia');

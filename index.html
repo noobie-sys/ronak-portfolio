@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
-<link rel="stylesheet" href="css/style.css?v=25">
+<link rel="stylesheet" href="css/style.css?v=29">
 <script>
   // The laptop starts shut on every load and opens as the visitor scrolls.
   (function () {
@@ -33,7 +33,6 @@
     <a href="#work" data-go="#work" data-sec="work"><span class="roll">Work</span></a>
     <a href="#archive" data-go="#archive" data-sec="archive"><span class="roll">Archive</span></a>
     <a href="#about" data-go="#about" data-sec="about"><span class="roll">About</span></a>
-    <a href="#desk" data-go="#desk" data-sec="desk"><span class="roll">Desk</span></a>
     <a href="#contact" data-go="#contact" data-sec="contact"><span class="roll">Contact</span></a>
   </nav>
   <div class="bar-right">
@@ -47,7 +46,6 @@
   <a href="#work" data-go="#work">Work</a>
   <a href="#archive" data-go="#archive">Archive</a>
   <a href="#about" data-go="#about">About</a>
-  <a href="#desk" data-go="#desk">Desk</a>
   <a href="#contact" data-go="#contact">Contact</a>
   <button type="button" data-copy>Copy email</button>
 </nav>
@@ -70,15 +68,14 @@
                 <a href="#work" data-go="#work">Work</a>
                 <a href="#archive" data-go="#archive">Archive</a>
                 <a href="#about" data-go="#about">About</a>
-                <a href="#desk" data-go="#desk">Desk</a>
                 <a href="#contact" data-go="#contact">Contact</a>
               </nav>
               <span class="mb-right"><span class="mb-status"><i aria-hidden="true"></i>Available for freelance</span><span class="mb-clock" data-clock>New Delhi</span></span>
             </div>
             <div class="desk-icons">
-              <a class="d-icon" href="#work" data-go="#work" data-mode="video"><i class="fold"></i><span>Videos</span></a>
-              <a class="d-icon" href="#work" data-go="#work" data-mode="design"><i class="fold"></i><span>Designs</span></a>
-              <a class="d-icon" href="#about" data-go="#about"><i class="doc">TXT</i><span>About.txt</span></a>
+              <a class="d-icon" href="#work" data-go="#work" data-mode="video" data-cursor="Drag · click to open"><i class="fold"></i><span>Videos</span></a>
+              <a class="d-icon" href="#work" data-go="#work" data-mode="design" data-cursor="Drag · click to open"><i class="fold"></i><span>Designs</span></a>
+              <a class="d-icon" href="#about" data-go="#about" data-cursor="Drag · click to open"><i class="doc">TXT</i><span>About.txt</span></a>
             </div>
             <div class="hero-content">
               <ul class="hero-tags" aria-label="What I do">
@@ -94,7 +91,7 @@
               <a class="app" href="#work" data-go="#work" data-mode="video" aria-label="Showreel" style="--bgc: linear-gradient(180deg, var(--cobalt-light), var(--cobalt-deep))">🎬<span class="tip">Showreel</span></a>
               <a class="app" href="#work" data-go="#work" data-mode="design" aria-label="Designs" style="--bgc: linear-gradient(180deg, #fff, var(--sky))">🎨<span class="tip">Designs</span></a>
               <a class="app" href="#archive" data-go="#archive" aria-label="Archive" style="--bgc: var(--mist)">🗂️<span class="tip">Archive</span></a>
-              <a class="app" href="#desk" data-go="#desk" data-sheet="music" aria-label="Music" style="--bgc: var(--ink)">🎧<span class="tip">Music</span></a>
+              <a class="app" href="https://open.spotify.com/playlist/3yXSVTAIa4t8dH3luyQ3CW" target="_blank" rel="noopener" aria-label="My playlist on Spotify" style="--bgc: transparent"><img src="assets/img/spotify.webp" alt="" width="256" height="256"><span class="tip">My playlist</span></a>
               <span class="dock-sep" aria-hidden="true"></span>
               <a class="app" href="#about" data-go="#about" aria-label="About me"><img src="assets/img/ronak.jpg" alt="" width="800" height="800"><span class="tip">About me</span></a>
               <a class="app" href="#contact" data-go="#contact" aria-label="Contact" style="--bgc: linear-gradient(180deg, var(--cobalt-light), var(--cobalt))">✉️<span class="tip">Contact</span></a>
@@ -123,11 +120,9 @@
   <!-- Work: the drum -->
   <section class="sec" id="work" data-scene="night">
     <div class="wrap">
-      <div class="inner sec-head sec-row">
-        <div class="sec-head">
-          <p class="eyebrow">Selected work</p>
-          <h2 class="h2 split">The reel <em>room</em></h2>
-        </div>
+      <div class="inner sec-head sec-center">
+        <p class="eyebrow">Selected work</p>
+        <h2 class="h2 split">The <em>showcase</em></h2>
         <p class="lead rv">Drag or swipe to spin the drum. The middle card plays. Click it to watch with sound.</p>
       </div>
     </div>
@@ -193,46 +188,61 @@
     </div>
   </section>
 
-  <!-- About -->
-  <section class="sec wrap" id="about" data-scene="cobalt">
+  <!-- About: "Hey, I'm Ronak" at his desk. Hover (or tap) the objects; he turns round when you hover him. Then the story so far. -->
+  <section class="sec wrap" id="about" data-scene="light">
     <div class="inner">
-      <div class="sec-head">
-        <p class="eyebrow">About</p>
-        <h2 class="statement split">I'm Ronak. I turn ideas into visuals that grab <em>attention.</em></h2>
-      </div>
-      <div class="about-grid">
-        <div class="about-copy rv">
-          <p>I'm a graphic designer and video editor in New Delhi with 4+ years across freelance, agency and in-house teams. Right now I design and edit at The Night Marketer.</p>
-          <p>I make social media creatives, campaign visuals, YouTube thumbnails, packaging, and short and long-form video, from the first idea to the final export.</p>
-          <ul class="tools" aria-label="Tools">
+      <div class="hi">
+        <div class="hi-copy">
+          <p class="eyebrow">About</p>
+          <h2 class="h2 split">Hey, I'm <em>Ronak</em></h2>
+          <p class="lead rv">Graphic designer and video editor from New Delhi, with 4+ years across freelance, agency and in-house teams. Right now I design and edit at The Night Marketer.</p>
+          <p class="lead rv">Social creatives, campaign visuals, thumbnails, packaging, and short and long-form video, from the first idea to the final export.</p>
+          <ul class="tools rv" aria-label="Tools">
             <li>Premiere Pro</li><li>After Effects</li><li>Photoshop</li><li>Illustrator</li><li>InDesign</li><li>Clip Studio Paint</li><li>AI video tools</li>
           </ul>
+          <p class="room-hint rv"><span class="for-mouse">Hover over anything on my desk</span><span class="for-touch">Tap anything on my desk</span> 👀</p>
         </div>
-        <figure class="portrait rv" id="portrait" data-cursor="Hi 👋">
-          <div class="pf-tilt" id="pfTilt"><img src="assets/img/ronak.jpg" alt="Ronak Bisht" width="800" height="800" loading="lazy"><span class="pf-sheen" aria-hidden="true"></span></div>
-          <span class="pf-pop" aria-hidden="true" style="--x: 6%; --y: 12%; --tx: -34px; --ty: -26px; --r: -14deg; --d: 0ms">🎬</span>
-          <span class="pf-pop" aria-hidden="true" style="--x: 94%; --y: 16%; --tx: 34px; --ty: -22px; --r: 12deg; --d: 50ms">🎧</span>
-          <span class="pf-pop" aria-hidden="true" style="--x: 0%; --y: 58%; --tx: -40px; --ty: 0px; --r: -8deg; --d: 100ms">✂️</span>
-          <span class="pf-pop" aria-hidden="true" style="--x: 100%; --y: 64%; --tx: 40px; --ty: 8px; --r: 10deg; --d: 150ms">🎨</span>
-          <span class="pf-pop" aria-hidden="true" style="--x: 72%; --y: 100%; --tx: 14px; --ty: 34px; --r: -6deg; --d: 200ms">💙</span>
-          <figcaption>New Delhi, India</figcaption>
-        </figure>
+        <div class="room rv" id="room">
+          <img class="room-img" src="assets/img/desk-back.webp" alt="Ronak at his desk: a shelf of books, a plant, a game controller, music and gym gear above a monitor, laptop and coffee mug" width="1122" height="1402" loading="lazy">
+          <img class="room-img room-face" src="assets/img/desk-front.webp" alt="" width="1122" height="1402" loading="lazy">
+          <img class="room-img room-open" src="assets/img/desk-drawer.webp" alt="" width="1122" height="1402" loading="lazy">
+          <div class="room-lit" id="roomLit" aria-hidden="true"><img src="assets/img/desk-back.webp" alt="" width="1122" height="1402" loading="lazy"></div>
+          <p class="room-say" id="roomSay" aria-live="polite"></p>
+          <button class="spot" type="button" data-sheet="anime" style="--l: 9.5%; --t: 7%; --w: 26%; --h: 13.6%"><span class="pill">Anime</span></button>
+          <span class="spot" style="--l: 36.6%; --t: 3.5%; --w: 26%; --h: 17%"><span class="pill">Still alive 🌱</span></span>
+          <span class="spot" style="--l: 64%; --t: 7%; --w: 26.5%; --h: 13.6%"><span class="pill">Games 🎮</span></span>
+          <button class="spot" type="button" data-sheet="music" style="--l: 9.5%; --t: 21%; --w: 26%; --h: 14%"><span class="pill">Music</span></button>
+          <button class="spot" type="button" data-sheet="music" style="--l: 36.6%; --t: 21%; --w: 26%; --h: 14%"><span class="pill">Music</span></button>
+          <button class="spot" type="button" data-sheet="gym" style="--l: 64%; --t: 21%; --w: 26.5%; --h: 14%"><span class="pill">Gym</span></button>
+          <span class="spot" data-quips="Privacy, bro 🙅‍♂️|Why are you lurking? 👀|Watch your own screen 😤|No peeking 🤫|Client work. Top secret 🔒" style="--l: 8%; --t: 50.5%; --w: 26%; --h: 17%"><span class="pill">Privacy, bro 🙅‍♂️</span></span>
+          <button class="spot r" type="button" data-go="#contact" style="--l: 81.5%; --t: 58%; --w: 12.5%; --h: 8.5%"><span class="pill">Let's talk ☕</span></button>
+          <span class="spot drawer" data-say="It's &lt;em&gt;empty,&lt;/em&gt; lol" style="--l: 5.5%; --t: 82.5%; --w: 19.5%; --h: 6%"></span>
+          <span class="spot drawer" data-say="No &lt;em&gt;money&lt;/em&gt; in here 💸" style="--l: 5.5%; --t: 88.5%; --w: 19.5%; --h: 6%"></span>
+          <button class="spot me" type="button" data-sheet="about" style="--l: 37%; --t: 37%; --w: 27%; --h: 24%"><span class="pill">Hi 👋 About me</span></button>
+        </div>
       </div>
 
-      <div class="tl-wrap">
+      <div class="tl-wrap" id="story">
         <div class="sec-head">
           <p class="eyebrow">Timeline</p>
           <h2 class="h2 split">The <em>story</em> so far</h2>
         </div>
         <div class="tl rv" id="tl">
-          <div class="tl-head"><span>Scroll to scrub · click a clip</span><span class="tc" id="tlTc">Mar 2022</span></div>
+          <div class="tl-head">
+            <span class="tl-how">Drag the playhead · click a clip · or use the arrows</span>
+            <span class="tl-ctrl">
+              <button class="tl-btn" type="button" id="tlPrev" aria-label="Previous chapter">←</button>
+              <span class="tc" id="tlTc">Mar 2022</span>
+              <button class="tl-btn" type="button" id="tlNext" aria-label="Next chapter">→</button>
+            </span>
+          </div>
           <div class="tl-grid">
             <div class="tl-names" aria-hidden="true"><span></span><span>Work</span><span>Study</span></div>
             <div class="tl-body" id="tlBody">
               <div class="tl-ruler" id="tlRuler"></div>
               <div class="tl-track" data-track="0"></div>
               <div class="tl-track" data-track="1"></div>
-              <div class="tl-play" id="tlPlay"></div>
+              <div class="tl-play" id="tlPlay" data-cursor="Drag"></div>
             </div>
           </div>
           <div class="tl-detail" aria-live="polite">
@@ -240,49 +250,6 @@
             <p id="tlText"></p>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Desk: the personal part -->
-  <section class="sec wrap" id="desk" data-scene="light">
-    <div class="inner">
-      <div class="sec-head sec-row">
-        <div class="sec-head">
-          <p class="eyebrow">Off screen</p>
-          <h2 class="h2 split">When I'm not <em>editing</em></h2>
-        </div>
-        <p class="lead rv">Music on repeat, the gym, cricket and anime. Hover or tap anything on the desk.</p>
-      </div>
-      <div class="desk rv" id="deskScene">
-        <div class="shelf" aria-hidden="true"></div>
-        <span class="deco" aria-hidden="true" style="--x: 89%; --y: 21.7%; --w: 7%">
-          <svg viewBox="0 0 40 60"><path d="M20 38C10 30 6 18 9 6c7 6 11 18 11 32z" fill="#d7e8fa" stroke="#0b1220" stroke-width="1.6"/><path d="M20 38c4-12 10-20 17-24-1 12-7 21-17 24z" fill="#0470c8" stroke="#0b1220" stroke-width="1.6"/><path d="M9 38h22l-3 20H12z" fill="#fff" stroke="#0b1220" stroke-width="1.8" stroke-linejoin="round"/></svg>
-        </span>
-        <button class="spot" type="button" data-sheet="anime" style="--x: 24%; --y: 23.4%; --w: 10%; --mx: 16%; --my: 23%; --mw: 18%">
-          <svg viewBox="0 0 70 60" aria-hidden="true"><rect x="3" y="12" width="14" height="46" rx="2" fill="#0470c8" stroke="currentColor" stroke-width="2"/><rect x="18" y="5" width="13" height="53" rx="2" fill="#fff" stroke="currentColor" stroke-width="2"/><rect x="32" y="15" width="12" height="43" rx="2" fill="#d7e8fa" stroke="currentColor" stroke-width="2"/><rect x="45" y="9" width="13" height="49" rx="2" fill="#0b1220" stroke="currentColor" stroke-width="2"/><path d="M7 20h6M49 17h5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M22 13h5M36 23h4" stroke="#0470c8" stroke-width="2" stroke-linecap="round"/></svg>
-          <span class="pill">Anime</span>
-        </button>
-        <button class="spot" type="button" data-sheet="cricket" style="--x: 47%; --y: 22.8%; --w: 13%; --mx: 47%; --my: 22.5%; --mw: 24%">
-          <svg viewBox="0 0 90 64" aria-hidden="true"><g transform="rotate(28 40 34)"><rect x="37" y="0" width="6" height="20" rx="2" fill="#0470c8" stroke="currentColor" stroke-width="2"/><rect x="33" y="18" width="14" height="44" rx="5" fill="#fff" stroke="currentColor" stroke-width="2"/><path d="M40 25v30" stroke="#d7e8fa" stroke-width="3" stroke-linecap="round"/></g><circle cx="74" cy="53" r="9" fill="#0470c8" stroke="currentColor" stroke-width="2"/><path d="M67 48c5 3 9 7 12 12M70 45c5 3 8 7 11 11" stroke="#fff" stroke-width="1.4" fill="none"/></svg>
-          <span class="pill">Cricket</span>
-        </button>
-        <button class="spot" type="button" data-sheet="gym" style="--x: 70%; --y: 25.2%; --w: 15%; --mx: 79%; --my: 25.5%; --mw: 28%">
-          <svg viewBox="0 0 100 44" aria-hidden="true"><rect x="20" y="19" width="60" height="6" rx="3" fill="#0b1220"/><rect x="2" y="12" width="8" height="20" rx="2" fill="#034f8f" stroke="currentColor" stroke-width="2"/><rect x="10" y="5" width="11" height="34" rx="3" fill="#0470c8" stroke="currentColor" stroke-width="2"/><rect x="79" y="5" width="11" height="34" rx="3" fill="#0470c8" stroke="currentColor" stroke-width="2"/><rect x="90" y="12" width="8" height="20" rx="2" fill="#034f8f" stroke="currentColor" stroke-width="2"/></svg>
-          <span class="pill">Gym</span>
-        </button>
-        <button class="spot" type="button" data-sheet="work" style="--x: 38%; --y: 61.6%; --w: 27%; --mx: 38%; --my: 57%; --mw: 54%">
-          <svg viewBox="0 0 120 92" aria-hidden="true"><rect x="2" y="2" width="116" height="70" rx="6" fill="#fff" stroke="currentColor" stroke-width="2.4"/><rect x="9" y="9" width="102" height="56" rx="3" fill="#d7e8fa"/><path d="M54 27v20l17-10z" fill="#0470c8"/><path d="M52 72h16l3 14H49z" fill="#fff" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M40 88h40" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-          <span class="pill">My work</span>
-        </button>
-        <button class="spot me" type="button" data-sheet="about" style="--x: 61%; --y: 74%; --w: 13%; --mx: 70%; --my: 73%; --mw: 26%">
-          <span class="me-inner"><span class="me-face"><img src="assets/img/ronak.jpg" alt="" width="800" height="800"></span><span class="me-face me-back">Hi, I'm <em>Ronak.</em></span></span>
-          <span class="pill">About me</span>
-        </button>
-        <button class="spot" type="button" data-sheet="music" style="--x: 82%; --y: 70.5%; --w: 12%; --mx: 18%; --my: 84%; --mw: 24%">
-          <svg viewBox="0 0 72 64" aria-hidden="true"><path d="M10 42V34a26 26 0 0 1 52 0v8" fill="none" stroke="currentColor" stroke-width="2.6"/><rect x="4" y="38" width="16" height="24" rx="6" fill="#0470c8" stroke="currentColor" stroke-width="2.4"/><rect x="52" y="38" width="16" height="24" rx="6" fill="#0470c8" stroke="currentColor" stroke-width="2.4"/></svg>
-          <span class="pill">Music</span>
-        </button>
       </div>
     </div>
   </section>
@@ -309,7 +276,7 @@
   </section>
 </main>
 
-<!-- Bottom sheet for the desk -->
+<!-- Bottom sheet for the desk (About) -->
 <div class="sheet-layer" id="sheetLayer" aria-hidden="true">
   <div class="sheet-backdrop" data-close></div>
   <div class="sheet" role="dialog" aria-modal="true" aria-label="Details" data-lenis-prevent>
@@ -341,10 +308,11 @@
 <template id="t-music">
   <p class="eyebrow">Music</p>
   <h3 class="sheet-title">On <em>repeat</em></h3>
+  <a class="sheet-link" href="https://open.spotify.com/playlist/3yXSVTAIa4t8dH3luyQ3CW" target="_blank" rel="noopener"><img src="assets/img/spotify.webp" alt="" width="256" height="256">My playlist on Spotify ↗</a>
   <div class="nowplaying"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><small>Now playing</small><span class="np-name">Juice WRLD</span></div>
   <div class="artists">
-    <div class="artist playing" data-name="Juice WRLD" role="button" tabindex="0"><span class="cover photo" style="--ph: url(assets/img/artist-juice.jpg)"><span class="rank">#1</span></span><b>Juice WRLD</b><span class="genre">Hip-hop</span><a class="listen" href="https://open.spotify.com/search/Juice%20WRLD" target="_blank" rel="noopener">Listen on Spotify ↗</a></div>
-    <div class="artist" data-name="Seedhe Maut" role="button" tabindex="0"><span class="cover photo" style="--ph: url(assets/img/artist-sm.jpg)"><span class="rank">#2</span></span><b>Seedhe Maut</b><span class="genre">DHH · Desi hip-hop</span><a class="listen" href="https://open.spotify.com/search/Seedhe%20Maut" target="_blank" rel="noopener">Listen on Spotify ↗</a></div>
+    <div class="artist playing" data-name="Juice WRLD" role="button" tabindex="0"><span class="cover photo" style="--ph: url(/assets/img/artist-juice.jpg)"><span class="rank">#1</span></span><b>Juice WRLD</b><span class="genre">Hip-hop</span><a class="listen" href="https://open.spotify.com/search/Juice%20WRLD" target="_blank" rel="noopener">Listen on Spotify ↗</a></div>
+    <div class="artist" data-name="Seedhe Maut" role="button" tabindex="0"><span class="cover photo" style="--ph: url(/assets/img/artist-sm.jpg)"><span class="rank">#2</span></span><b>Seedhe Maut</b><span class="genre">DHH · Desi hip-hop</span><a class="listen" href="https://open.spotify.com/search/Seedhe%20Maut" target="_blank" rel="noopener">Listen on Spotify ↗</a></div>
     <div class="artist" data-name="Karma" role="button" tabindex="0"><span class="cover type"><span class="rank">#3</span>K</span><b>Karma</b><span class="genre">DHH · Desi hip-hop</span><a class="listen" href="https://open.spotify.com/search/Karma%20rapper" target="_blank" rel="noopener">Listen on Spotify ↗</a></div>
   </div>
   <p class="credit">Photos via Wikimedia Commons: Juice WRLD by Lexiou WesCudi, CC BY-SA 2.0, cropped. Seedhe Maut by Callmehelper, CC0.</p>
@@ -370,10 +338,10 @@
   <p class="eyebrow">Anime</p>
   <h3 class="sheet-title">Anime, <em>sometimes</em></h3>
   <div class="posters">
-    <div class="poster-card" style="--ph: url(assets/img/anime-onepiece.jpg)"><span class="rank">#1</span><b>One Piece</b><span class="by">Eiichiro Oda</span></div>
-    <div class="poster-card" style="--ph: url(assets/img/anime-bleach.jpg)"><span class="rank">#2</span><b>Bleach</b><span class="by">Tite Kubo</span></div>
-    <div class="poster-card" style="--ph: url(assets/img/anime-vinland.jpg)"><span class="rank">#3</span><b>Vinland Saga</b><span class="by">Makoto Yukimura</span></div>
-    <div class="poster-card" style="--ph: url(assets/img/anime-hxh.jpg)"><span class="rank">#4</span><b>Hunter × Hunter</b><span class="by">Yoshihiro Togashi</span></div>
+    <div class="poster-card" style="--ph: url(/assets/img/anime-onepiece.jpg)"><span class="rank">#1</span><b>One Piece</b><span class="by">Eiichiro Oda</span></div>
+    <div class="poster-card" style="--ph: url(/assets/img/anime-bleach.jpg)"><span class="rank">#2</span><b>Bleach</b><span class="by">Tite Kubo</span></div>
+    <div class="poster-card" style="--ph: url(/assets/img/anime-vinland.jpg)"><span class="rank">#3</span><b>Vinland Saga</b><span class="by">Makoto Yukimura</span></div>
+    <div class="poster-card" style="--ph: url(/assets/img/anime-hxh.jpg)"><span class="rank">#4</span><b>Hunter × Hunter</b><span class="by">Yoshihiro Togashi</span></div>
   </div>
   <p class="credit">Cover art © the creators and their publishers, shown via Wikipedia.</p>
 </template>
@@ -382,20 +350,14 @@
   <h3 class="sheet-title">Hi, I'm <em>Ronak</em></h3>
   <p class="sheet-sub">Graphic designer and video editor from New Delhi. B.Com from Delhi University, a design diploma from DICE Academy, and 4+ years of design and editing.</p>
   <div class="chips"><span class="chip">Music</span><span class="chip">Gym</span><span class="chip">Cricket</span><span class="chip">Anime</span></div>
-  <div><a class="lb-btn" style="color: var(--cobalt); border-color: var(--line); display: inline-block; text-decoration: none" href="#about" data-go="#about">Read the full story ↓</a></div>
-</template>
-<template id="t-work">
-  <p class="eyebrow">My work</p>
-  <h3 class="sheet-title">The <em>work</em> lives here</h3>
-  <p class="sheet-sub">The monitor is the one work door on the desk. It opens the drum with the best edits.</p>
-  <div><a class="lb-btn" style="color: var(--cobalt); border-color: var(--line); display: inline-block; text-decoration: none" href="#work" data-go="#work" data-mode="video">Go to the drum ↓</a></div>
+  <div><a class="lb-btn" style="color: var(--cobalt); border-color: var(--line); display: inline-block; text-decoration: none" href="#story" data-go="#story">Read the full story ↓</a></div>
 </template>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
-<script type="module" src="js/main.js?v=25"></script>
+<script type="module" src="js/main.js?v=29"></script>
 <script>
   // Failsafe: never leave the laptop closed if a script fails to load.
   setTimeout(function () { if (!window.__rbBoot) document.documentElement.classList.remove('boot'); }, 6000);
