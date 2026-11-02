@@ -616,7 +616,7 @@ async function initDrum() {
   if (drumState !== 'idle') return;
   drumState = 'loading';
   try {
-    const mod = await import('./drum.js?v=53');
+    const mod = await import('./drum.js?v=56');
     drum = mod.createDrum(stage, {
       items: drumItems(), aspect: drumAspect(), bg: '#07182f', reduce,
       onChange: caption,
